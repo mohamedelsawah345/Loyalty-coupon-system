@@ -1,0 +1,152 @@
+﻿@model LoyaltyCouponsSystem.DAL.Entity.ApproveRecievedCoupons
+
+@{
+    ViewData["Title"] = "Approve Recieved Coupons";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b>Approve Received Coupons</b></h1>
+        <p class="lead text-secondary">Approve coupons received by the user.</p>
+    </div>
+
+    <form asp-action="Save" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- User Dropdown -->
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="user" class="form-label text-primary"><b>Select User</b></label>
+                <select asp-for="ApplicationUserId" class="form-control select2">
+                    <option value="">-- Select a User --</option>
+                    @foreach (var user in ViewBag.UsersDropdown as List<SelectListItem>)
+                    {
+                        <option value="@user.Value" selected="@(Model.ApplicationUserId == user.Value ? "selected" : null)">
+                            @user.Text
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Governorate Dropdown -->
+            <div class="col-md-6">
+                <label for="governorate" class="form-label text-primary"><b>Select Governorate</b></label>
+                <select asp-for="GovernorateId" class="form-control" id="governorate">
+                    <option value="">-- Select a Governorate --</option>
+                    @foreach (var gov in ViewBag.Governorates as List<SelectListItem>)
+                    {
+                        <option value="@gov.Value" selected="@(Model.GovernorateId?.ToString() == gov.Value ? "selected" : null)">
+                            @gov.Text
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Area Dropdown -->
+        <div class="row g-3 mt-3">
+            <div class="col-md-6">
+                <label for="area" class="form-label text-primary"><b>Select Area</b></label>
+                <select asp-for="AreaId" class="form-control" id="area">
+                    <option value="">-- Select an Area --</option>
+                    @if (ViewBag.Areas != null)
+                    {
+                        foreach (var area in ViewBag.Areas as List<SelectListItem>)
+                        {
+                            <option value="@area.Value" selected="@(Model.AreaId?.ToString() == area.Value ? "selected" : null)">
+                                @area.Text
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-custom">
+                <i class="fas fa-paper-plane"></i> Save
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Include jQuery and Select2 CSS/JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#governorate").change(function () {
+            var governorateId = $(this).val();
+            $("#area").empty().append('<option value="">-- Select an Area --</option>');
+
+            if (governorateId) {
+                $.ajax({
+                    url: '/ApproveRecievedCoupons/GetAreasByGovernorate',
+                    type: 'GET',
+                    data: { governorateId: governorateId },
+                    success: function (data) {
+                        $.each(data, function (index, area) {
+                            $("#area").append('<option value="' + area.value + '">' + area.text + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        $('.select2').select2({
+            placeholder: "Search for a customer or technician...",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+
+<style>
+    .form-label {
+        color: #007bff !important;
+        font-weight: bold;
+    }
+
+    .form-control, .form-select {
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 10px rgba(0, 86, 179, 0.3);
+        }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 8px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+</style>

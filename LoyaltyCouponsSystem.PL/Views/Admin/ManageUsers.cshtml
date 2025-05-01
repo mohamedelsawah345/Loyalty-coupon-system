@@ -1,0 +1,871 @@
+﻿@model LoyaltyCouponsSystem.BLL.ViewModel.Admin.ManageUsersViewModel
+
+@{
+    ViewData["Title"] = "Manage Users";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+@*<h1>Manage Users</h1>*@
+@Html.AntiForgeryToken()
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+
+<div class="container mt-4">
+    <h1 class="text-primary text-center"><b>@SharedLocalizer["ManageUsers"] </b></h1>
+    <br />
+    <!-- Search Filters and Add Button -->
+    <div class="row mb-4 justify-content-center">
+        <div class="col-md-8">
+            <div class="input-group shadow-sm">
+                <input type="text" id="searchBox" class="form-control" placeholder=" @SharedLocalizer["Search"] ">
+                <a href="@Url.Action("AddUser", "User")" class="btn btn-add-customer">
+                    <i class="fas fa-plus"></i> @SharedLocalizer["AddUser"]
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="table-responsive mt-4" style="overflow-x: auto;">
+        <table id="usersTable" class="table table-hover table-striped shadow-lg rounded border-light-modern">
+            <thead class="thead-dark bg-primary text-white">
+                <tr>
+                    <th>@SharedLocalizer["Username"]</th>
+                    <th> @SharedLocalizer["NationalID"]</th>
+                    <th>@SharedLocalizer["PhoneNumber1"]</th>
+                    <th>@SharedLocalizer["PhoneNumber2"]</th>
+                    <th>@SharedLocalizer["Governorate"]</th>
+                    <th>@SharedLocalizer["Area"]</th>
+                    <th>@SharedLocalizer["CurrentRole"]</th>
+                    <th>@SharedLocalizer["Status"]</th>
+                    <th>@SharedLocalizer["AssignRole"]</th>
+                    <th>@SharedLocalizer["Permissions"]</th>
+                    <th>@SharedLocalizer["Action"]</th>
+                    <th>@SharedLocalizer["ResetPassword"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.ConfirmedUsers.Where(u => u.IsActive).OrderByDescending(u => u.CreatedDate))
+                {
+                    if (user.Role.Equals("SuperAdmin", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue; // Skip the row entirely
+                    }
+                    <tr class="active-row">
+                        <td>@user.UserName</td>
+                        <td>@user.NationalID</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@(string.IsNullOrEmpty(user.OptionalPhoneNumber) ? "N/A" : user.OptionalPhoneNumber)</td>
+                        <td>@user.Governorate</td>
+                        <td>@user.City</td>
+                        <td>@user.Role</td>
+                        <td>
+                            <span class="badge bg-success">Active</span>
+                        </td>
+                        <td>
+                            <form asp-action="AssignRole" asp-controller="Admin" method="post" class="action-form">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <select name="roleName" class="form-select action-dropdown">
+                                    <option disabled selected>Select Role</option>
+                                    @foreach (var role in Model.AllRoles)
+                                    {
+                                        <option value="@role">@role</option>
+                                    }
+                                </select>
+                                <br />
+                                <button type="button" class="btn btn-primary btn-sm shadow assign-btn" onclick="confirmAssignRole('@user.UserName', this.form)">
+                                    Assign Role
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-sm shadow set-permission-btn" data-userid="@user.FullName">
+                                Set Permissions
+                            </button>
+                        </td>
+                        <td>
+                            <form asp-action="ToggleActivation" asp-controller="Admin" method="post" class="action-form">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="button"
+                                        class="btn btn-sm toggle-btn shadow deactivate"
+                                        onclick="toggleActivation(this, '@user.UserName', this.form)"
+                                        data-status="@user.IsActive">
+                                    Deactivate
+                                </button>
+                            </form>
+                            <br />
+
+                            <a href="@Url.Action("UpdateUser", "Admin", new { id = user.Id })" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("ResetPassword", "Admin", new { id = user.Id })" class="btn btn-warning btn-sm shadow reset-password-btn">
+                                <i class="fas fa-sync-alt"></i> Reset Password
+                            </a>
+                        </td>
+
+                        </tr>
+                }
+
+                @foreach (var user in Model.ConfirmedUsers.Where(u => !u.IsActive))
+                {
+                    <tr class="inactive-row">
+                        <td>@user.UserName</td>
+                        <td>@user.NationalID</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@(string.IsNullOrEmpty(user.OptionalPhoneNumber) ? "N/A" : user.OptionalPhoneNumber)</td>
+                        <td>@user.Governorate</td>
+                        <td>@user.City</td>
+                        <td>@user.Role</td>
+                        <td>
+                            <span class="badge bg-danger">Inactive</span>
+                        </td>
+                        <td>
+                            <span class="text-muted">Not Available</span>
+                        </td>
+                        <td>
+                            <span class="text-muted">Not Available</span>
+                        </td>
+                        <td>
+                            <form asp-action="ToggleActivation" asp-controller="Admin" method="post" class="action-form">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="button"
+                                        class="btn btn-sm toggle-btn shadow activate"
+                                        onclick="toggleActivation(this, '@user.UserName', this.form)"
+                                        data-status="@user.IsActive">
+                                    Activate
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+
+                @foreach (var user in Model.UnconfirmedUsers)
+                {
+                    <tr>
+                        <td>@user.UserName</td>
+                        <td>@user.NationalID</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@(string.IsNullOrEmpty(user.OptionalPhoneNumber) ? "N/A" : user.OptionalPhoneNumber)</td>
+                        <td>@user.Governorate</td>
+                        <td>@user.City</td>
+                        <td>@user.Role</td>
+                        <td><span class="badge bg-warning text-white">Pending</span></td>
+                        <td>
+                            <form asp-action="AssignRole" asp-controller="Admin" method="post" class="action-form">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <select name="roleName" class="form-select action-dropdown">
+                                    <option disabled selected>Select Role</option>
+                                    @foreach (var role in Model.AllRoles)
+                                    {
+                                        <option value="@role">@role</option>
+                                    }
+                                </select>
+                                <br />
+                                <button type="button" class="btn btn-primary btn-sm shadow assign-btn" onclick="confirmAssignRole('@user.UserName', this.form)">
+                                    Assign Role
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            @if (user.IsActive)
+                            {
+                                <button type="button" class="btn btn-info btn-sm shadow set-permission-btn" data-userid="@user.Id">
+                                    Set Permissions
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Available</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="ConfirmAccount" asp-controller="Admin" method="post" class="action-form">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="button" class="btn btn-warning btn-sm shadow confirm-btn" onclick="confirmAccount('@user.UserName', this.form)">
+                                    Confirm Account
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="paginationContainer" class="mt-4 text-center"></div>
+</div>
+
+
+
+
+
+<!-- Confirmation Modals -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" id="confirmationModalBody">
+                <!-- Content updated dynamically via JavaScript -->
+            </div>
+            <div class="modal-footer justify-content-start">
+                <button type="button" class="btn btn-danger btn-lg px-4 py-2" id="confirmActionButton">
+                    <i class="fas fa-check-circle"></i> Confirm
+                </button>
+                <button type="button" class="btn btn-secondary btn-lg px-4 py-2 ms-2" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* } *@
+@* else *@
+@* { *@
+@*     <div class="alert alert-danger" role="alert"> *@
+@*         You do not have permission to view this page. *@
+@*     </div> *@
+@* } *@
+
+
+<style>
+    .container {
+        max-width: 95%; /* Adjust container width to fit larger table */
+        margin: 0 auto; /* Center the container */
+    }
+
+
+    .btn-add-customer {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border-radius: 0 30px 30px 0; /* Rounded corners */
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 10px; /* Add spacing between the input and button */
+    }
+
+        .btn-add-customer:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .input-group {
+        flex-wrap: nowrap; /* Ensure items stay on the same row */
+    }
+
+
+    .table-responsive {
+        overflow-x: auto; /* Enables horizontal scrolling */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling for touch devices */
+    }
+
+    .table {
+        min-width: 800px; /* Ensure table has a minimum width for scrolling */
+        width: 100%; /* Allows the table to stretch as needed */
+    }
+
+        .table th,
+        .table td {
+            word-wrap: break-word; /* Wrap content within cells */
+            white-space: normal; /* Allow text wrapping */
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px; /* Increased padding for better spacing */
+            font-weight: 600; /* Bold text for better readability */
+            font-size: 14px; /* Larger font size for data */
+        }
+
+        .table th {
+            background-color: #007bff !important;
+            color: #ffffff !important;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 16px; /* Larger font size for headers */
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: #e9f5ff;
+    }
+
+    .inactive-row {
+        background-color: #f0f0f0 !important; /* Light gray background */
+        color: #6c757d; /* Dimmed text color */
+    }
+
+        .inactive-row td {
+            text-decoration: line-through; /* Add strikethrough to text */
+        }
+
+    .active-row {
+        background-color: inherit; /* Reset to default background */
+        color: inherit; /* Reset to default text color */
+    }
+
+        .active-row td {
+            text-decoration: none; /* Remove strikethrough */
+        }
+
+    h1 {
+        font-size: 32px; /* Larger header size */
+        font-weight: bold;
+    }
+
+    .btn-danger {
+        background-color: #ff4d4d;
+        border: none;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        color: white;
+        transition: background 0.3s ease;
+    }
+
+        .btn-danger:hover {
+            background-color: #cc0000;
+        }
+
+    .assign-btn,
+    .confirm-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px; /* Adjust button size */
+        font-size: 14px; /* Larger font size */
+        font-weight: bold;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+        .assign-btn:hover,
+        .confirm-btn:hover {
+            background-color: #0056b3;
+            color: white !important;
+        }
+
+    .toggle-btn {
+        padding: 10px 15px; /* Adjust button size */
+        font-size: 14px; /* Larger font size */
+        font-weight: bold;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+        .toggle-btn.deactivate {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .toggle-btn.deactivate:hover {
+                background-color: #b02a37;
+            }
+
+        .toggle-btn.activate {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .toggle-btn.activate:hover {
+                background-color: #218838;
+            }
+
+    .action-dropdown {
+        border-radius: 6px;
+        padding: 10px 15px; /* Adjust dropdown size */
+        font-size: 14px; /* Larger font size */
+        border: 1px solid #ddd;
+        background-color: #fff;
+        width: 120px;
+        transition: border-color 0.3s ease;
+    }
+
+    .badge {
+        padding: 5px 10px; /* Adjust badge size */
+        border-radius: 6px;
+        font-size: 14px; /* Larger font size */
+        font-weight: bold;
+    }
+
+    #searchBox {
+        border-radius: 30px 0 0 30px;
+        padding: 8px; 
+        font-size: 14px; 
+        width: 100%; 
+        border: 2px solid #007bff; 
+        background-color: #f9f9f9; 
+    }
+
+
+                #searchBox::placeholder {
+                    font-style: italic;
+                    color: #aaa;
+                }
+
+            #paginationContainer .btn {
+                font-size: 14px;
+                padding: 8px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+            }
+
+            #paginationContainer .btn-primary {
+                background-color: #007bff;
+                color: white;
+                border: none;
+            }
+
+            #paginationContainer .btn-outline-primary {
+                border: 1px solid #007bff;
+                color: #007bff;
+                background-color: white;
+            }
+
+            #paginationContainer .btn:hover {
+                opacity: 0.8;
+            }
+
+
+                .custom-swal-popup {
+            width: 800px !important; /* Increase pop-up width */
+    }
+
+    .row-cols-3 {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px; /* Spacing between cards */
+    }
+
+    .permission-card-container {
+        flex: 0 0 30%; /* Each card takes 30% width */
+        max-width: 30%;
+        margin: 10px 0; /* Add vertical spacing */
+        display: flex;
+        justify-content: center;
+    }
+
+    .permission-card {
+        height: 200px;
+        border-radius: 15px;
+        transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .permission-card:nth-child(7) {
+            margin: 0 auto; /* Center the last card */
+        }
+
+
+        .permission-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .checkbox-container {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .permission-checkbox {
+        transform: scale(1.5);
+    }
+
+    .save-permissions-btn, .cancel-btn {
+        padding: 10px 30px;
+        font-size: 18px;
+        border-radius: 30px;
+    }
+
+    .save-permissions-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+        .save-permissions-btn:hover {
+            background-color: #0056b3;
+        }
+
+    .cancel-btn {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+    .assigned-permission {
+        background-color: #d4edda; /* Light green */
+        border: 3px solid #28a745; /* Green border */
+    }
+
+    .reset-password-btn {
+        background-color: #ffc107; /* Yellow background */
+        color: #000; /* Black text for contrast */
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .reset-password-btn:hover {
+            background-color: #e0a800; /* Darker yellow on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .reset-password-btn:active {
+            transform: translateY(0); /* Reset lift effect on click */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+</style>
+
+
+<!-- SweetAlert2 -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+            document.addEventListener("DOMContentLoaded", function () {
+        let currentForm = null;
+
+        // Confirm Assign Role Functionality
+        function confirmAssignRole(userName, form) {
+            currentForm = form;
+            const selectedRole = form.querySelector("select[name='roleName']").value;
+
+            if (!selectedRole || selectedRole === "Select Role") {
+                Swal.fire("Warning!", "Please select a role before assigning.", "warning");
+                return;
+            }
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: `You are about to assign the role "${selectedRole}" to ${userName}.`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#007bff",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, Assign!",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentForm.submit();
+                }
+            });
+        }
+
+        document.querySelectorAll(".assign-btn").forEach((button) => {
+            button.addEventListener("click", function () {
+                const form = this.closest("form");
+                const userName = this.closest("tr").querySelector("td").textContent.trim();
+                confirmAssignRole(userName, form);
+            });
+        });
+
+        document.querySelectorAll(".confirm-btn").forEach((button) => {
+            button.addEventListener("click", function () {
+                const form = this.closest("form");
+                const userName = this.closest("tr").querySelector("td").textContent.trim();
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: `You are about to confirm the account for ${userName}.`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#007bff",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: "Yes, Confirm!",
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        document.querySelectorAll(".toggle-btn").forEach((button) => {
+            button.addEventListener("click", function () {
+                const userName = this.closest("tr").querySelector("td").textContent.trim();
+                const form = this.closest("form");
+                const isActive = this.getAttribute("data-status") === "True";
+                const action = isActive ? "Deactivate" : "Activate";
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: `You are about to ${action} the account for ${userName}.`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: isActive ? "#d33" : "#28a745",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: `Yes, ${action}!`,
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        function rearrangeRows() {
+            const tableBody = document.querySelector("#usersTable tbody");
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+            const activeRows = rows.filter(row => row.querySelector(".badge").textContent.trim() === "Active");
+            const unconfirmedRows = rows.filter(row => row.querySelector(".badge").textContent.trim() === "Pending");
+            const inactiveRows = rows.filter(row => row.querySelector(".badge").textContent.trim() === "Inactive");
+
+            tableBody.innerHTML = "";
+            activeRows.forEach(row => tableBody.appendChild(row));
+            unconfirmedRows.forEach(row => tableBody.appendChild(row));
+            inactiveRows.forEach(row => tableBody.appendChild(row));
+        }
+
+        function styleRows() {
+            const rows = Array.from(document.querySelectorAll("#usersTable tbody tr"));
+            rows.forEach(row => {
+                const badge = row.querySelector(".badge");
+                if (badge) {
+                    if (badge.textContent.trim() === "Inactive") {
+                        row.classList.add("inactive-row");
+                    } else if (badge.textContent.trim() === "Pending") {
+                        row.classList.add("pending-row");
+                    } else {
+                        row.classList.remove("inactive-row");
+                        row.classList.remove("pending-row");
+                    }
+                }
+            });
+        }
+
+        rearrangeRows();
+        styleRows();
+
+        const rowsPerPage = 10;
+        const paginationContainer = document.getElementById("paginationContainer");
+
+        function showPage(pageNumber) {
+            const rows = Array.from(document.querySelector("#usersTable tbody").querySelectorAll("tr"));
+            rows.forEach((row, index) => {
+                row.style.display = (index >= (pageNumber - 1) * rowsPerPage && index < pageNumber * rowsPerPage) ? "" : "none";
+            });
+            updatePagination(pageNumber, Math.ceil(rows.length / rowsPerPage));
+        }
+
+            function updatePagination(currentPage, totalPages) {
+        const paginationContainer = document.getElementById("paginationContainer");
+        paginationContainer.innerHTML = "";
+
+        const maxVisiblePages = 3; // Limit the number of pagination buttons displayed
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // Add "Previous" button
+        if (currentPage > 1) {
+            const prevButton = document.createElement("button");
+            prevButton.textContent = "«";
+            prevButton.className = "btn btn-sm mx-1 btn-outline-primary";
+            prevButton.addEventListener("click", () => showPage(currentPage - 1));
+            paginationContainer.appendChild(prevButton);
+        }
+
+        // Add page number buttons
+        for (let i = startPage; i <= endPage; i++) {
+            const button = document.createElement("button");
+            button.textContent = i;
+            button.className = `btn btn-sm mx-1 ${i === currentPage ? "btn-primary" : "btn-outline-primary"}`;
+            button.addEventListener("click", () => showPage(i));
+            paginationContainer.appendChild(button);
+        }
+
+        // Add "Next" button
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement("button");
+            nextButton.textContent = "»";
+            nextButton.className = "btn btn-sm mx-1 btn-outline-primary";
+            nextButton.addEventListener("click", () => showPage(currentPage + 1));
+            paginationContainer.appendChild(nextButton);
+        }
+    }
+
+        showPage(1);
+
+        document.getElementById("searchBox").addEventListener("input", function () {
+            const searchValue = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll("#usersTable tbody tr");
+
+            rows.forEach(row => {
+                const username = row.children[0]?.textContent.toLowerCase();
+                const nationalId = row.children[1]?.textContent.toLowerCase();
+                const phoneNumber = row.children[2]?.textContent.toLowerCase();
+                const optionalPhone = row.children[3]?.textContent.toLowerCase();
+                const governorate = row.children[4]?.textContent.toLowerCase();
+                const city = row.children[5]?.textContent.toLowerCase();
+                const role = row.children[6]?.textContent.toLowerCase();
+                const status = row.children[7]?.textContent.toLowerCase().trim();
+
+                const isStatusMatch =
+                    searchValue === "active" ? status === "active" :
+                    searchValue === "inactive" ? status === "inactive" :
+                    status.includes(searchValue);
+
+                const isOtherMatch =
+                    username.includes(searchValue) ||
+                    nationalId.includes(searchValue) ||
+                    phoneNumber.includes(searchValue) ||
+                    optionalPhone.includes(searchValue) ||
+                    governorate.includes(searchValue) ||
+                    city.includes(searchValue) ||
+                    role.includes(searchValue);
+
+                row.style.display = isStatusMatch || isOtherMatch ? "" : "none";
+            });
+        });
+
+        // Second part: Set Permissions Modal
+                const permissions = [
+        { id: "Generate QR Codes", label: "Generate QRs Coupons", icon: "fa-qrcode", color: "#007bff" }, // Keep as is
+        { id: "Exchange Permissions", label: "Generate Exchange Permission", icon: "fa-file-invoice", color: "#ffc107" }, // Keep as is
+        { id: "Deliver From Representative to Customer", label: "Deliver From Representative to Customer", icon: "fa-handshake", color: "#6f42c1" }, // Icon for collaborative delivery
+        { id: "Receive From Customer", label: "Receive From Customer", icon: "fa-hand-holding", color: "#fd7e14" }, // Icon for receiving
+        { id: "Approve Recieved Coupons", label: "Approve Received Coupons", icon: "fa-check-circle", color: "#28a745" }, // Keep as is
+        { id: "Manage Users", label: "Manage Users", icon: "fa-users-cog", color: "#20c997" }, // Users with settings icon
+        { id: "Manage Customers", label: "Manage Customers", icon: "fa-users", color: "#17a2b8" } // Customer tag icon
+    ];
+
+    document.body.addEventListener("click", async function (event) {
+        if (!event.target.closest(".set-permission-btn")) return;
+
+        const button = event.target.closest(".set-permission-btn");
+        const userRow = button.closest("tr");
+        const userName = userRow.querySelector("td:nth-child(1)").textContent.trim();
+        const userId = userRow.querySelector("input[name='userId']").value;
+
+        console.log(`Fetching assigned permissions for user: ${userId}`);
+
+        try {
+            // Fetch assigned permissions
+            const response = await fetch(`/Admin/GetAssignedPermissions?userId=${userId}`);
+            if (!response.ok) throw new Error("Failed to fetch user permissions.");
+            const assignedPermissionIds = await response.json();
+
+            console.log("Assigned Permissions:", assignedPermissionIds);
+
+            let cardHTML = permissions.map(permission => {
+                const isAssigned = assignedPermissionIds.includes(permission.id);
+                return `
+                    <div class="permission-card-container">
+                        <div class="card permission-card" data-id="${permission.id}"
+                             style="border: 3px solid ${permission.color}; background-color: ${isAssigned ? '#d4edda' : 'white'};">
+                            <div class="card-body text-center">
+                                <i class="fas ${permission.icon}" style="font-size: 50px; color: ${permission.color};"></i>
+                                <h5 class="card-title mt-3">${permission.label}</h5>
+                            </div>
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="permission-${permission.id}" class="form-check-input permission-checkbox"
+                                    ${isAssigned ? "checked" : ""}>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            Swal.fire({
+                title: `<h3 style="color: #007bff; font-weight: bold;">Set Permissions for User: ${userName}</h3>`,
+                html: `
+                    <div class="container text-center">
+                        <div class="row row-cols-3">
+                            ${cardHTML}
+                        </div>
+                        <div class="mt-4">
+                            <button class="btn btn-primary save-permissions-btn" data-userid="${userId}">Save Permissions</button>
+                            <button class="btn btn-secondary cancel-btn">Cancel</button>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: { popup: 'custom-swal-popup' },
+                didRender: () => {
+                    console.log("Modal rendered");
+
+                    // Highlight already assigned permissions
+                    document.querySelectorAll(".permission-checkbox").forEach(checkbox => {
+                        if (checkbox.checked) {
+                            checkbox.closest(".permission-card").style.backgroundColor = "#d4edda"; // Light green for assigned
+                        }
+                    });
+
+                    // Toggle checkbox on card click
+                    document.querySelectorAll(".permission-card").forEach(card => {
+                        card.addEventListener("click", function () {
+                            const checkbox = this.querySelector(".permission-checkbox");
+                            checkbox.checked = !checkbox.checked;
+                            this.style.backgroundColor = checkbox.checked ? "#f2f8ff" : "white";
+                        });
+                    });
+
+                    // Save permissions
+                    document.querySelector(".save-permissions-btn").addEventListener("click", async function () {
+                        const selectedPermissions = Array.from(document.querySelectorAll(".permission-checkbox:checked"))
+                            .map(checkbox => checkbox.id.replace("permission-", ""));
+                        const userId = this.getAttribute("data-userid");
+
+                        console.log(`Saving permissions for ${userId}:`, selectedPermissions);
+
+                        try {
+                            const saveResponse = await fetch("/Admin/AssignPermissionsToUser", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "RequestVerificationToken": document.querySelector("input[name=__RequestVerificationToken]").value
+                                },
+                                body: JSON.stringify({ UserId: userId, SelectedPermissions: selectedPermissions })
+                            });
+
+                            if (!saveResponse.ok) throw new Error("Failed to assign permissions.");
+
+                            Swal.fire("Success!", "Permissions assigned successfully.", "success").then(() => {
+                                location.reload();
+                            });
+                        } catch (error) {
+                            console.error("Error saving permissions:", error);
+                            Swal.fire("Error!", error.message, "error");
+                        }
+                    });
+
+                    // Cancel button
+                    document.querySelector(".cancel-btn").addEventListener("click", function () {
+                        Swal.close();
+                    });
+                }
+            });
+
+        } catch (error) {
+            Swal.fire("Error!", error.message, "error");
+        }
+    });
+
+    });
+
+</script>

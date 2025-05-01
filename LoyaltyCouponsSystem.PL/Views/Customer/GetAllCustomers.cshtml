@@ -1,0 +1,378 @@
+@using LoyaltyCouponsSystem.BLL.ViewModel.Customer
+@model List<CustomerViewModel>
+
+@{
+    ViewData["Title"] = "All Customers";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<div class="container mt-4">
+    <h1 class="text-primary text-center"><b> @SharedLocalizer["AllCustomers"]</b></h1>
+
+    <!-- Search Filters and Add Button -->
+    <div class="row mb-4 justify-content-center">
+        <div class="col-md-8">
+            <div class="input-group shadow-sm">
+                <input type="text" id="searchBox" class="form-control" placeholder=@SharedLocalizer["Search"]>
+                <a href="@Url.Action("AddCustomer", "Customer")" class="btn btn-add-customer ms-2">
+                    <i class="fas fa-plus"></i> @SharedLocalizer["AddNewCustomer"]
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table id="customerTable" class="table table-hover table-striped shadow-lg rounded border-light-modern">
+            <thead class="thead-dark bg-primary text-white">
+                <tr>
+                    <th>@SharedLocalizer["Code"]</th>
+                    <th>@SharedLocalizer["Name"]</th>
+                    <th>@SharedLocalizer["Governorate"]</th>
+                    <th>@SharedLocalizer["Area"]</th>
+                    <th>@SharedLocalizer["PhoneNumber"]</th>
+                    <th>@SharedLocalizer["CreatedBy"]</th>
+                    <th>@SharedLocalizer["CreationDateTime"]</th>
+                    <th>@SharedLocalizer["UpdatedBy"]</th>
+                    <th>@SharedLocalizer["UpdatedAt"]</th>
+                    <th>@SharedLocalizer["Status"]</th>
+                    <th>@SharedLocalizer["Action"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model)
+                {
+                    <tr id="row-@customer.CustomerID" class="@(customer.IsActive ? "" : "inactive-row")">
+                        <td>@customer.Code</td>
+                        <td>@customer.Name</td>
+                        <td>@customer.Governate</td>
+                        <td>@customer.City</td>
+                        <td>@customer.PhoneNumber</td>
+                        <td>@customer.CreatedBy</td>
+                        <td>@customer.CreatedAt</td>
+                        <td>@customer.UpdatedBy</td>
+                        <td>@customer.UpdatedAt</td>
+                        <td>
+                            <span class="badge @(customer.IsActive ? "bg-success" : "bg-danger")">
+                                @(customer.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm @(customer.IsActive ? "btn-danger" : "btn-success") toggle-activation"
+                                    data-customer-id="@customer.CustomerID"
+                                    data-is-active="@customer.IsActive">
+                                @(customer.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                            <br />
+                            <br />
+                            <a href="@Url.Action("UpdateCustomer", "Customer", new { id = customer.CustomerID })" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-edit"></i> @SharedLocalizer["Edit"]
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+    <!-- Confirmation Modal for Toggle Activation (moved outside the loop) -->
+    <div class="modal fade" id="toggleConfirmationModal" tabindex="-1" aria-labelledby="toggleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="toggleModalLabel">Confirm Toggle Activation</h5>
+                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to <span id="toggleAction">activate</span> this customer?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmToggleButton" class="btn btn-warning">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div id="paginationContainer" class="mt-4 text-center"></div>
+</div>
+
+<style>
+    /* Table Styling */
+    .table th {
+        background-color: #007bff !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #e9f5ff;
+    }
+
+    .btn-add-customer {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border-radius: 30px;
+    }
+
+        .btn-add-customer:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    .badge.bg-success {
+        background-color: #28a745;
+    }
+
+    .badge.bg-danger {
+        background-color: #dc3545;
+    }
+
+    /* Styling for inactive rows */
+    .inactive-row {
+        background-color: #f5f5f5; /* Light gray background */
+        color: #6c757d; /* Muted text color */
+    }
+
+        .inactive-row td {
+            text-decoration: line-through; /* Strikethrough text */
+        }
+
+            /* Exclude Action column from line-through */
+            .inactive-row td:last-child, /* Ensure no line-through on Action column */
+            .inactive-row td:last-child * {
+                text-decoration: none !important;
+                /* Keep text color muted but no line-through */
+            }
+
+</style>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS (includes Popper.js for modal handling) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- SweetAlert2 -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.querySelector("#customerTable tbody");
+
+        // Rearrange rows based on status
+            function rearrangeRows() {
+        const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+        // Filter and sort active rows by CustomerID (descending, assuming "row-{ID}" is used as ID attribute)
+        const activeRows = rows
+            .filter(row => row.querySelector(".badge").textContent.trim() === "Active")
+            .sort((a, b) => {
+                const idA = parseInt(a.id.replace("row-", ""), 10);
+                const idB = parseInt(b.id.replace("row-", ""), 10);
+                return idB - idA; // Sort descending by Customer ID
+            });
+
+        // Keep inactive rows as is
+        const inactiveRows = rows.filter(row => row.querySelector(".badge").textContent.trim() === "Inactive");
+
+        // Clear and re-add rows
+        tableBody.innerHTML = "";
+        activeRows.forEach(row => tableBody.appendChild(row)); // Append active rows first
+        inactiveRows.forEach(row => tableBody.appendChild(row)); // Append inactive rows
+    }
+
+
+        // Style rows dynamically based on active/inactive status
+        function styleRows() {
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+            rows.forEach(row => {
+                const badge = row.querySelector(".badge");
+                if (badge && badge.textContent.trim() === "Inactive") {
+                    row.classList.add("inactive-row");
+                } else {
+                    row.classList.remove("inactive-row");
+                }
+            });
+        }
+
+        // Rearrange and style rows on page load
+        rearrangeRows();
+        styleRows();
+
+        // Toggle activation with SweetAlert confirmation
+    document.querySelectorAll(".toggle-activation").forEach(button => {
+        button.addEventListener("click", function () {
+            const customerId = this.getAttribute("data-customer-id");
+            const isActive = this.getAttribute("data-is-active") === "True";
+            const action = isActive ? "Deactivate" : "Activate";
+            const actionText = isActive ? "deactivated" : "activated";
+
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: `Are you sure?`,
+                text: `You are about to ${action} this customer.`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: isActive ? "#d33" : "#28a745",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: `Yes, ${action}!`,
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Call API to toggle activation
+                    fetch(`/Customer/ToggleActivation?customerId=${customerId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const row = document.getElementById(`row-${customerId}`);
+                                const statusBadge = row.querySelector(".badge");
+                                const toggleButton = row.querySelector(".toggle-activation");
+
+                                // Update status and button dynamically
+                                if (data.isActive) {
+                                    statusBadge.textContent = "Active";
+                                    statusBadge.classList.remove("bg-danger");
+                                    statusBadge.classList.add("bg-success");
+                                    toggleButton.textContent = "Deactivate";
+                                    toggleButton.classList.remove("btn-success");
+                                    toggleButton.classList.add("btn-danger");
+                                    toggleButton.setAttribute("data-is-active", "True");
+                                } else {
+                                    statusBadge.textContent = "Inactive";
+                                    statusBadge.classList.remove("bg-success");
+                                    statusBadge.classList.add("bg-danger");
+                                    toggleButton.textContent = "Activate";
+                                    toggleButton.classList.remove("btn-danger");
+                                    toggleButton.classList.add("btn-success");
+                                    toggleButton.setAttribute("data-is-active", "False");
+                                }
+
+                                // Rearrange and style rows after the change
+                                rearrangeRows();
+                                styleRows();
+
+                                Swal.fire(
+                                    "Success!",
+                                    `Customer has been ${actionText} successfully.`,
+                                    "success"
+                                );
+                            } else {
+                                Swal.fire(
+                                    "Error!",
+                                    data.message || `Failed to ${actionText} the customer.`,
+                                    "error"
+                                );
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            Swal.fire(
+                                "Error!",
+                                "An error occurred while processing the request. Please try again.",
+                                "error"
+                            );
+                        });
+                }
+            });
+        });
+    });
+
+        // Search functionality
+        document.getElementById("searchBox").addEventListener("input", function () {
+            const searchValue = this.value.toLowerCase().trim(); // Get the search value
+            const rows = document.querySelectorAll("#customerTable tbody tr");
+
+            rows.forEach((row) => {
+                // Extract values from relevant columns
+                const code = row.children[0]?.textContent.toLowerCase(); // Code (1st column)
+                const name = row.children[1]?.textContent.toLowerCase(); // Name (2nd column)
+                const governorate = row.children[2]?.textContent.toLowerCase(); // Governorate (3rd column)
+                const city = row.children[3]?.textContent.toLowerCase(); // City (4th column)
+                const phoneNumber = row.children[4]?.textContent.toLowerCase(); // Phone Number (5th column)
+                const status = row.children[5]?.textContent.toLowerCase().trim(); // Status (6th column)
+
+                // Handle exact match for "active" or "inactive" in the Status column
+                const isStatusMatch =
+                    searchValue === "active" ? status === "active" :
+                    searchValue === "inactive" ? status === "inactive" :
+                    status.includes(searchValue); // General match for other cases
+
+                // Check if the search matches any of the other columns
+                const isOtherMatch =
+                    code.includes(searchValue) ||
+                    name.includes(searchValue) ||
+                    governorate.includes(searchValue) ||
+                    city.includes(searchValue) ||
+                    phoneNumber.includes(searchValue);
+
+                // Show/hide the row based on the match
+                row.style.display = isStatusMatch || isOtherMatch ? "" : "none";
+            });
+        });
+
+        // Pagination functionality
+        const rowsPerPage = 10;
+        const paginationContainer = document.getElementById("paginationContainer");
+
+        function showPage(pageNumber) {
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+            rows.forEach((row, index) => {
+                row.style.display = (index >= (pageNumber - 1) * rowsPerPage && index < pageNumber * rowsPerPage) ? "" : "none";
+            });
+            updatePagination(pageNumber, Math.ceil(rows.length / rowsPerPage));
+        }
+
+            function updatePagination(currentPage, totalPages) {
+        paginationContainer.innerHTML = "";
+
+        const maxVisiblePages = 3; // Limit the number of pagination buttons displayed
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        if (currentPage > 1) {
+            const prevButton = document.createElement("button");
+            prevButton.textContent = "«";
+            prevButton.className = "btn btn-sm mx-1 btn-outline-primary";
+            prevButton.addEventListener("click", () => showPage(currentPage - 1));
+            paginationContainer.appendChild(prevButton);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const button = document.createElement("button");
+            button.textContent = i;
+            button.className = `btn btn-sm mx-1 ${i === currentPage ? "btn-primary" : "btn-outline-primary"}`;
+            button.addEventListener("click", () => showPage(i));
+            paginationContainer.appendChild(button);
+        }
+
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement("button");
+            nextButton.textContent = "»";
+            nextButton.className = "btn btn-sm mx-1 btn-outline-primary";
+            nextButton.addEventListener("click", () => showPage(currentPage + 1));
+            paginationContainer.appendChild(nextButton);
+        }
+    }
+
+
+        showPage(1);
+    });
+</script>

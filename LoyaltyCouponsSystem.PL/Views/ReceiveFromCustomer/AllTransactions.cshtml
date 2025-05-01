@@ -1,0 +1,239 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.ReceiveFromCustomer
+@model TransactionPaginationViewModel
+
+@{
+    ViewData["Title"] = "All Transactions";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+@await Html.PartialAsync("_BurgerMenu")
+
+<div class="container mt-5">
+    <h1 class="text-primary text-center mb-4"> @SharedLocalizer["AllTransactionsReciveRecipt"]</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center">@TempData["Error"]</div>
+    }
+
+    <!-- Search Bar -->
+    <div class="mb-4 d-flex justify-content-center">
+        <div class="input-group w-50 shadow">
+            <span class="input-group-text bg-primary text-white">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="text" id="searchInput" class="form-control" placeholder=@SharedLocalizer["Search"] onkeyup="searchTransactions()">
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="table-responsive">
+        <table class="table table-hover shadow-lg rounded" id="transactionsTable">
+            <thead class="bg-primary text-white text-center">
+                <tr>
+                    <th>@SharedLocalizer["CouponReceiptNumber"]</th>
+                    <th>@SharedLocalizer["Customer"]</th>
+                    <th>@SharedLocalizer["Distributor"]</th>
+                    <th>@SharedLocalizer["Technician"]</th>
+                    <th>@SharedLocalizer["Governorate"]</th>
+                    <th>@SharedLocalizer["Area"]</th>
+                    <th>@SharedLocalizer["CreationDateTime"]</th>
+                    <th>@SharedLocalizer["ScanQR"]</th>
+                    <th>@SharedLocalizer["Details"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model.Transactions)
+                {
+                    <tr class="text-center">
+                        <td>@transaction.CouponReceiptNumber</td>
+                        <td>@transaction.CustomerCodeAndName</td>
+                        <td>@(transaction.DistributorCodeAndName ?? "N/A")</td>
+                        <td>@transaction.TechnicianCodeAndName</td>
+                        <td>@transaction.GovernorateName</td>
+                        <td>@transaction.AreaName</td>
+                        <td>@transaction.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>
+                            <button type="button" class="btn btn-success" onclick="redirectToScan('@transaction.CouponReceiptNumber')">
+                                <i class="fas fa-qrcode"></i> Scan
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info" onclick="redirectToDetails('@transaction.CouponReceiptNumber')">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-container text-center mt-4">
+        @if (Model.CurrentPage > 1)
+        {
+            <a href="@Url.Action("AllTransactions", new { page = Model.CurrentPage - 1, pageSize = Model.PageSize })" class="btn btn-outline-primary me-2">&laquo; Previous</a>
+        }
+
+        @if (Model.CurrentPage > 1)
+        {
+            <a href="@Url.Action("AllTransactions", new { page = Model.CurrentPage - 1, pageSize = Model.PageSize })" class="btn btn-outline-primary me-1">@(Model.CurrentPage - 1)</a>
+        }
+
+        <a href="@Url.Action("AllTransactions", new { page = Model.CurrentPage, pageSize = Model.PageSize })" class="btn btn-primary me-1">@Model.CurrentPage</a>
+
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <a href="@Url.Action("AllTransactions", new { page = Model.CurrentPage + 1, pageSize = Model.PageSize })" class="btn btn-outline-primary me-1">@(Model.CurrentPage + 1)</a>
+        }
+
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <a href="@Url.Action("AllTransactions", new { page = Model.CurrentPage + 1, pageSize = Model.PageSize })" class="btn btn-outline-primary ms-2">Next &raquo;</a>
+        }
+    </div>
+</div>
+
+<style>
+    /* General Styling */
+    body {
+        background-color: #f8f9fa;
+    }
+
+    h1.text-primary {
+        font-weight: bold;
+    }
+
+    /* Search Bar */
+    .input-group {
+        border-radius: 8px;
+    }
+
+    .input-group-text {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    .form-control {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    /* Table */
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .table th {
+            text-transform: uppercase;
+            font-size: 14px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+    /* Buttons */
+    .btn {
+        font-size: 14px;
+        padding: 8px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border: none;
+    }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+    /* Pagination */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+        .pagination-container .btn-outline-primary {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+            .pagination-container .btn-outline-primary:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .pagination-container .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .table-responsive
+
+    {
+        overflow-x: auto;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+    function searchTransactions() {
+        var input = document.getElementById("searchInput").value.toLowerCase();
+        var table = document.getElementById("transactionsTable");
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) {
+            var match = false;
+            var td = tr[i].getElementsByTagName("td");
+
+            for (var j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    if (td[j].textContent.toLowerCase().includes(input)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+            tr[i].style.display = match ? "" : "none";
+        }
+    }
+
+    function redirectToScan(receiptNumber) {
+        window.location.href = "/QrCode?receiptNumber=" + receiptNumber;
+    }
+
+    function redirectToDetails(receiptNumber) {
+        window.location.href = "/ReceiveFromCustomer/ScannedQrCodes?receiptNumber=" + receiptNumber;
+    }
+</script>

@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Customer Management";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+
+}
+
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <h1 class="display-4 text-primary"><b>Customer Management</b></h1>
+        <p class="lead text-secondary">Effortlessly manage all your customers in one place.</p>
+    </div>
+
+    <!-- Button Section -->
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6 text-center mb-3">
+            <a href="@Url.Action("AddCustomer", "Customer")" class="btn btn-custom">
+                <i class="fas fa-user-plus"></i> Add New Customer
+            </a>
+        </div>
+        <div class="col-md-6 text-center mb-3">
+            <a href="@Url.Action("GetAllCustomers", "Customer")" class="btn btn-view-all">
+                <i class="fas fa-list me-2"></i> View All Customers
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Style for the header section */
+    h1.display-4 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+    }
+
+    .lead {
+        font-size: 1.2rem;
+        font-weight: 300;
+    }
+
+    /* Custom Add Customer Button */
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 30px;
+        background-color: #28a745;
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        width: 300px;
+    }
+
+        .btn-custom i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .btn-custom:hover {
+            background-color: #218838;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+    /* View All Customers Button */
+    .btn-view-all {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 30px;
+        background-color: #6c757d;
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        width: 300px;
+    }
+
+        .btn-view-all i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .btn-view-all:hover {
+            background-color: #5a6268;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+</style>

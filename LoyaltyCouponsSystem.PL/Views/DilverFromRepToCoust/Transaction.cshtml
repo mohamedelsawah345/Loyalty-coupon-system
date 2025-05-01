@@ -1,0 +1,224 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.DeliverFormRepToCoust
+@model IEnumerable<TransactionForRecieptFromRepToCustVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="card-title text-primary mb-0">@SharedLocalizer["Transaction Of QRs Receipt"]</h4>
+        </div>
+
+        <div class="card-body">
+            <!-- Search Form -->
+            <form method="get" class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" name="ExchangePermissionNumber" class="form-control" placeholder="@SharedLocalizer["ExchangePermissionNumber"]" value="@ViewContext.HttpContext.Request.Query["ExchangePermissionNumber"]" />
+                </div>
+
+                <div class="col-md-3">
+                    <select id="governorate" name="governorate" class="form-select">
+                        <option disabled selected>@SharedLocalizer["SelectGovernate"]</option>
+                        @foreach (var governorate in ViewBag.Governorates as IEnumerable<string>)
+                        {
+                            <option value="@governorate">@governorate</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="area" name="area" class="form-select" disabled>
+                        <option disabled selected>@SharedLocalizer["SelectArea"]</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 text-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> @SharedLocalizer["Filter"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>@SharedLocalizer["ExchangePermissionNumber"]</th>
+                            <th>@SharedLocalizer["CustomerCode"]</th>
+                            <th>@SharedLocalizer["CreationDateTime"]</th>
+                            <th>@SharedLocalizer["CreatedBy"]</th>
+                            <th>@SharedLocalizer["Governorate"]</th>
+                            <th>@SharedLocalizer["Area"]</th>
+                            <th>@SharedLocalizer["PictureofReceipt"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.ExchangePermissionNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => item.CustomerCode)</td>
+                                <td>@Html.DisplayFor(modelItem => item.CreationDateTime)</td>
+                                <td>@Html.DisplayFor(modelItem => item.GeneratedBy)</td>
+                                <td>@Html.DisplayFor(modelItem => item.GovernorateName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.AreaName)</td>
+                                <td>
+                                    <!-- View Image Button (Triggers Modal) -->
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="openModal('@Url.Action("GetImage", new { id = item.Id })')">
+                                        @SharedLocalizer["View Image"]
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Image Modal -->
+            <div id="imageModal" class="modal" onclick="closeModal()">
+                <span class="close">&times;</span>
+                <img class="modal-content" id="fullImage">
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav>
+                    <ul class="pagination">
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)">&laquo; @SharedLocalizer["Previous"]</a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)">@SharedLocalizer["Next"] &raquo;</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('governorate').addEventListener('change', function () {
+        const governorate = this.value;
+        const areaDropdown = document.getElementById('area');
+
+        if (governorate) {
+            areaDropdown.disabled = false;
+            fetch(`/DilverFromRepToCoust/GetAreas?governorate=${governorate}`)
+                .then(response => response.json())
+                .then(data => {
+                    areaDropdown.innerHTML = '<option disabled selected>@SharedLocalizer["SelectArea"]</option>';
+                    data.forEach(area => {
+                        const option = document.createElement('option');
+                        option.value = area;
+                        option.textContent = area;
+                        areaDropdown.appendChild(option);
+                    });
+                    areaDropdown.disabled = false;
+                });
+        } else {
+            areaDropdown.innerHTML = '<option disabled selected>@SharedLocalizer["SelectArea"]</option>';
+            areaDropdown.disabled = true;
+        }
+    });
+
+    function openModal(imageUrl) {
+        document.getElementById("fullImage").src = imageUrl;
+        document.getElementById("imageModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
+    }
+</script>
+
+<style>
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination {
+        list-style: none;
+        padding: 0;
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-link {
+        padding: 10px 16px;
+        margin: 0 4px;
+        border: 1px solid #007bff;
+        border-radius: 6px;
+        color: #007bff;
+        background-color: white;
+        font-weight: 600;
+        transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    }
+
+        .page-link:hover {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.1);
+        }
+
+    .page-item.active .page-link {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Modal Styling */
+    .modal {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        max-width: 90%;
+        max-height: 80vh;
+        margin: auto;
+        border-radius: 10px;
+    }
+
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>

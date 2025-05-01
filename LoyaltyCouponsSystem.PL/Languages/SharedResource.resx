@@ -1,0 +1,570 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="QRCode" xml:space="preserve">
+    <value>QR Code</value>
+  </data>
+  <data name="GenerateQR" xml:space="preserve">
+    <value>Generate QR</value>
+  </data>
+  <data name="TransactionGeneratedQRs" xml:space="preserve">
+    <value>Transaction Generated QRs</value>
+  </data>
+  <data name="ApproveScan" xml:space="preserve">
+    <value>Approve Scan</value>
+  </data>
+  <data name="ExchangePermission" xml:space="preserve">
+    <value>Exchange Permission</value>
+  </data>
+  <data name="MerchantReceipt" xml:space="preserve">
+    <value>Merchant Receipt</value>
+  </data>
+  <data name="ReceiveFromCustomer" xml:space="preserve">
+    <value>Receive From Representitive</value>
+  </data>
+  <data name="ManageEmployees" xml:space="preserve">
+    <value>Manage Employees</value>
+  </data>
+  <data name="ManageUsers" xml:space="preserve">
+    <value>Manage Users</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Log Out</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="AccessDeniedMessage" xml:space="preserve">
+    <value>Access Denied </value>
+  </data>
+  <data name="WelcomePage" xml:space="preserve">
+    <value>Welcome Page</value>
+  </data>
+  <data name="Heading (h2)" xml:space="preserve">
+    <value>Welcome to you in QRCode System</value>
+  </data>
+  <data name="Paragraph (p)" xml:space="preserve">
+    <value>We're excited to have you here. Explore the latest coupons, deals and more.</value>
+  </data>
+  <data name="GEP" xml:space="preserve">
+    <value>Generate Exchange Permission</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>عربي</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="TEP" xml:space="preserve">
+    <value>Transactions Exchanges permission</value>
+  </data>
+  <data name="DeliverFromRepresentativeToCustomer" xml:space="preserve">
+    <value>Merchant receipt from the representative</value>
+  </data>
+  <data name="AllTransactions" xml:space="preserve">
+    <value>All Transactions</value>
+  </data>
+  <data name="ReturnItems" xml:space="preserve">
+    <value>Reciept From Customer </value>
+  </data>
+  <data name="ManageMerchant" xml:space="preserve">
+    <value>Manage Merchant</value>
+  </data>
+  <data name="ManageDistributor" xml:space="preserve">
+    <value>Manage Distributor</value>
+  </data>
+  <data name="ManageTechnician" xml:space="preserve">
+    <value>Manage Technician</value>
+  </data>
+  <data name="ManageUsers " xml:space="preserve">
+    <value>Manage Users </value>
+  </data>
+  <data name="RecieptRecive" xml:space="preserve">
+    <value>RecieptRecive</value>
+  </data>
+  <data name="RecieptReceiveFromCustomer" xml:space="preserve">
+    <value>Reciept Receive From Customer</value>
+  </data>
+  <data name="GQR" xml:space="preserve">
+    <value>Generate QR</value>
+  </data>
+  <data name="SeclectTypeOfCoupon" xml:space="preserve">
+    <value>Seclect Type Of Coupon</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="SelectGovernate" xml:space="preserve">
+    <value>Select Governate</value>
+  </data>
+  <data name="SelectArea" xml:space="preserve">
+    <value>Select Area</value>
+  </data>
+  <data name="SelectNumber" xml:space="preserve">
+    <value>Select Number</value>
+  </data>
+  <data name="sequence" xml:space="preserve">
+    <value>sequence</value>
+  </data>
+  <data name="GQRS" xml:space="preserve">
+    <value>Generate QRCodes</value>
+  </data>
+  <data name="SelectDistributor" xml:space="preserve">
+    <value>Select Distributor</value>
+  </data>
+  <data name="SelectCustomer" xml:space="preserve">
+    <value>Select Customer</value>
+  </data>
+  <data name="ExchangePermissionNumber" xml:space="preserve">
+    <value>Exchange Permission Number</value>
+  </data>
+  <data name="StartSequence" xml:space="preserve">
+    <value>Start Sequence</value>
+  </data>
+  <data name="EndSequence" xml:space="preserve">
+    <value>End Sequence</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="AddAnother" xml:space="preserve">
+    <value>Add Another</value>
+  </data>
+  <data name="Assign" xml:space="preserve">
+    <value>Assign</value>
+  </data>
+  <data name="AQRW" xml:space="preserve">
+    <value>Assign QR Codes with a streamlined and modern interface</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>Coupon Sort</value>
+  </data>
+  <data name="CouponType" xml:space="preserve">
+    <value>Coupon Type</value>
+  </data>
+  <data name="Receipt" xml:space="preserve">
+    <value>Receipt</value>
+  </data>
+  <data name="UploadPicture" xml:space="preserve">
+    <value>Upload Picture</value>
+  </data>
+  <data name="EAS" xml:space="preserve">
+    <value>Easily manage receiving items with a clear and modern interface</value>
+  </data>
+  <data name="Technicians" xml:space="preserve">
+    <value>Technicians</value>
+  </data>
+  <data name="Employees" xml:space="preserve">
+    <value>Employees</value>
+  </data>
+  <data name="Distruputer" xml:space="preserve">
+    <value>Distributors(Optional)</value>
+  </data>
+  <data name="submit" xml:space="preserve">
+    <value>submit</value>
+  </data>
+  <data name="CouponReceiptNumber" xml:space="preserve">
+    <value>Coupon Receipt Number</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="TotalExchangePermissions" xml:space="preserve">
+    <value>Total Exchange Permissions</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Preapproved" xml:space="preserve">
+    <value>Preapproved</value>
+  </data>
+  <data name="Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Serial Number</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="TypeOfCoupone" xml:space="preserve">
+    <value>Type Of Coupone</value>
+  </data>
+  <data name="CreationDateTime" xml:space="preserve">
+    <value>Creation Date Time</value>
+  </data>
+  <data name="NumberOfCoupones" xml:space="preserve">
+    <value>Number Of Coupones</value>
+  </data>
+  <data name="GeneratedBy" xml:space="preserve">
+    <value>Generated By</value>
+  </data>
+  <data name="Governorate" xml:space="preserve">
+    <value>Governorate</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="OrderInYear" xml:space="preserve">
+    <value>Order In Year</value>
+  </data>
+  <data name="Represintitive" xml:space="preserve">
+    <value>Represintitive</value>
+  </data>
+  <data name="ReceiveCustomer" xml:space="preserve">
+    <value>Receive Customer</value>
+  </data>
+  <data name="DeliverCustomer" xml:space="preserve">
+    <value>Deliver Customer</value>
+  </data>
+  <data name="ApprovedBy" xml:space="preserve">
+    <value>ApprovedBy</value>
+  </data>
+  <data name="CouponHistory" xml:space="preserve">
+    <value>CouponHistory</value>
+  </data>
+  <data name="QRCodeScanner" xml:space="preserve">
+    <value>QR Code Scanner</value>
+  </data>
+  <data name="ContinueScanning" xml:space="preserve">
+    <value>ContinueScanning</value>
+  </data>
+  <data name="FinishScanning" xml:space="preserve">
+    <value>Finish Scanning</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="Distributor" xml:space="preserve">
+    <value>Distributor</value>
+  </data>
+  <data name="NumberofCouponsScanned" xml:space="preserve">
+    <value>Number of Coupons Scanned</value>
+  </data>
+  <data name="Scannedresultswillappearhere" xml:space="preserve">
+    <value>Scanned results will appear here</value>
+  </data>
+  <data name="Transaction Of QRs Recipt" xml:space="preserve">
+    <value>Transaction Of QRs Recipt</value>
+  </data>
+  <data name="CustomerCode" xml:space="preserve">
+    <value>Customer Code</value>
+  </data>
+  <data name="PictureofReciept" xml:space="preserve">
+    <value>Picture of Reciept</value>
+  </data>
+  <data name="AllTransactionsReciveRecipt" xml:space="preserve">
+    <value>All Transactions Recive Recipt</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ScanQR" xml:space="preserve">
+    <value>ScanQR</value>
+  </data>
+  <data name="AllCustomers" xml:space="preserve">
+    <value>All Customers</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>CreatedBy</value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>Updated By</value>
+  </data>
+  <data name="UpdatedAt" xml:space="preserve">
+    <value>Updated At</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="AddNewCustomer" xml:space="preserve">
+    <value>Add New Customer</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Activate</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Deactivate</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AddNewDistributor" xml:space="preserve">
+    <value>Add New Distributor</value>
+  </data>
+  <data name="AllDistributors" xml:space="preserve">
+    <value>All Distributors</value>
+  </data>
+  <data name="AllTechnicians" xml:space="preserve">
+    <value>All Technicians</value>
+  </data>
+  <data name="AddNewTechnician" xml:space="preserve">
+    <value>Add New Technician</value>
+  </data>
+  <data name="NationalID" xml:space="preserve">
+    <value>NationalID</value>
+  </data>
+  <data name="PhoneNumber1" xml:space="preserve">
+    <value>Phone Number1</value>
+  </data>
+  <data name="PhoneNumber2" xml:space="preserve">
+    <value>Phone Number2</value>
+  </data>
+  <data name="PhoneNumber3" xml:space="preserve">
+    <value>Phone Number3</value>
+  </data>
+  <data name="CustomersDetails" xml:space="preserve">
+    <value>Customers Details</value>
+  </data>
+  <data name="RepresentativeDetails" xml:space="preserve">
+    <value>Representative Details</value>
+  </data>
+  <data name="CreatedBy_At_UpdatedBy_At" xml:space="preserve">
+    <value>CreatedBy/At and UpdatedBy/At</value>
+  </data>
+  <data name="AddUser" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="CurrentRole" xml:space="preserve">
+    <value>Current Role</value>
+  </data>
+  <data name="AssignRole" xml:space="preserve">
+    <value>AssignRole</value>
+  </data>
+  <data name="Permissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>ResetPassword</value>
+  </data>
+  <data name="All Transactions Exchange Permission" xml:space="preserve">
+    <value>All Transactions Exchange Permission</value>
+  </data>
+  <data name="RegisterCustomer" xml:space="preserve">
+    <value>Register Customer</value>
+  </data>
+  <data name="Entercustomername" xml:space="preserve">
+    <value>Enter customer name</value>
+  </data>
+  <data name="UploadExcel" xml:space="preserve">
+    <value>Upload Excel</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="UploadExcelFiletoAuto_fillCustomerData" xml:space="preserve">
+    <value>Upload Excel File to Auto fill Customer Data</value>
+  </data>
+  <data name="AddCustomer" xml:space="preserve">
+    <value>Add Customer</value>
+  </data>
+  <data name="Registernewcustomerswitheaseandflexibility" xml:space="preserve">
+    <value>Register new customers with ease and flexibility</value>
+  </data>
+  <data name="AccountNumber" xml:space="preserve">
+    <value>Account Number</value>
+  </data>
+  <data name="SelectCustomers" xml:space="preserve">
+    <value>Select Customers</value>
+  </data>
+  <data name="RegisterTechnician" xml:space="preserve">
+    <value>Register Technician</value>
+  </data>
+  <data name="SelectRepresentatives" xml:space="preserve">
+    <value>Select Representatives</value>
+  </data>
+  <data name="AddTechnician" xml:space="preserve">
+    <value>Add Technician</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="SelectRole" xml:space="preserve">
+    <value>Select Role</value>
+  </data>
+  <data name="ReceiptNumber" xml:space="preserve">
+    <value>Receipt Number</value>
+  </data>
+  <data name="NickName" xml:space="preserve">
+    <value>Nick Name</value>
+  </data>
+  <data name="Add Distributor" xml:space="preserve">
+    <value>Add Distributor</value>
+  </data>
+  <data name="Register new distributors with ease and flexibility" xml:space="preserve">
+    <value>Register new distributors with ease and flexibility</value>
+  </data>
+  <data name=" Register Distributor" xml:space="preserve">
+    <value> Register Distributor</value>
+  </data>
+  <data name="Register new technicians with ease and flexibility" xml:space="preserve">
+    <value>Register new technicians with ease and flexibility</value>
+  </data>
+  <data name="Transactions" xml:space="preserve">
+    <value>All Transactions</value>
+  </data>
+  <data name="Technician" xml:space="preserve">
+    <value>Technician</value>
+  </data>
+</root>

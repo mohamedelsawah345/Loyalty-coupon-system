@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "AssignRole";
+    Layout = "~/Views/Shared/AdminDashBoard_Layout1.cshtml";
+}
+<h2>Assign Role to User</h2>
+
+<form asp-action="AssignRole" method="post">
+    <div class="form-group">
+        <label for="userId">Select User:</label>
+        <select id="userId" name="userId" class="form-control">
+            @foreach (var user in Model)
+            {
+                <option value="@user.Id">@user.UserName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="roleName">Select Role:</label>
+        <select id="roleName" name="roleName" class="form-control">
+            @foreach (var user in Model)
+                    {
+            <option value="@User.IsInRole">@user.Role</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Assign Role</button>
+</form>

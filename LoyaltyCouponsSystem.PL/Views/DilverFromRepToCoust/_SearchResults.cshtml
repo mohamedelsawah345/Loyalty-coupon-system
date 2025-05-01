@@ -1,0 +1,18 @@
+﻿@using LoyaltyCouponsSystem.DAL.Entity
+@model List<DeliverFromRepToCoust>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No results found.</p>
+}
+else
+{
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>
+                <strong>@item.CostomerCode</strong> 
+            </li>
+        }
+    </ul>
+}

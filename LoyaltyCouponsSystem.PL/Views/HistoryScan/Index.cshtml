@@ -1,0 +1,257 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Scanner</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- For KeyFrame -->
+    <link rel="stylesheet" href="~/css/Key.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">QR Code Scanner</h1>
+
+        <div class="row">
+            <!-- Upload Form -->
+            <div class="col-md-6">
+                <h3>Upload Image</h3>
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    <div class="mb-3">
+                        <label for="postedFile" class="form-label">Select an image with QR Code:</label>
+                        <input type="file" class="form-control" id="postedFile" name="postedFile" accept="image/*" />
+                    </div>
+                    <button type="button" class="btn btn-primary w-100" id="uploadButton">Upload and Decode</button>
+                </form>
+            </div>
+
+            <!-- Camera Scanner -->
+            <div class="col-md-6">
+                <h3>Scan with Camera</h3>
+                <button class="btn btn-success w-100 mb-3" id="scanButton">Start Scanning</button>
+                <div class="position-relative">
+                    <video id="preview" class="hidden"></video>
+                    <div id="scannerOverlay" class="hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display Result -->
+        <div id="result" class="mt-4 text-center">
+            <h3>Decoded QR Code:</h3>
+            <p class="alert alert-success" id="decodedText"></p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+<style>
+    /* Modern styling */
+    body {
+        background-color: #f4f7fc;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h1, h3 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .container {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Upload and scan buttons */
+    .btn-primary, .btn-success {
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 12px;
+        border-radius: 8px;
+        transition: 0.3s ease-in-out;
+        border: none;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+    }
+
+    /* Video preview */
+    #preview {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border: 3px solid #4CAF50;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Scanning overlay animation */
+    #scannerOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background-color: rgba(0, 255, 0, 0.7);
+        animation: scanning 2s infinite linear;
+    }
+
+    @@keyframes scanning {
+        0% {
+            top: 0;
+        }
+
+        50% {
+            top: 50%;
+        }
+
+        100% {
+            top: 100%;
+        }
+    }
+
+    /* File input */
+    input[type="file"] {
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    /* QR Code Result */
+    #result {
+        background: #eafaf1;
+        border-left: 5px solid #2ecc71;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #27ae60;
+        margin-top: 20px;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .container {
+            padding: 20px;
+        }
+
+        .btn-primary, .btn-success {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+
+
+<!-- JS Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
+
+<script>
+    const video = document.getElementById('preview');
+    const scanButton = document.getElementById('scanButton');
+    const uploadButton = document.getElementById('uploadButton');
+    const scannerOverlay = document.getElementById('scannerOverlay');
+    const resultText = document.getElementById('decodedText');
+    const resultDiv = document.getElementById('result');
+
+    // Hide result initially
+    resultDiv.style.display = 'none';
+
+    scanButton.onclick = async () => {
+        video.classList.remove('hidden');
+        scannerOverlay.classList.remove('hidden');
+
+        // Start the camera
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        video.srcObject = stream;
+        video.play();
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function scanFrame() {
+            if (video.paused || video.ended) return;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+            if (code) {
+                alert('QR Code scanned: ' + code.data);
+                resultText.innerText = code.data;
+                resultDiv.style.display = 'block';
+
+                // Stop video stream
+                video.srcObject.getTracks().forEach(track => track.stop());
+            } else {
+                requestAnimationFrame(scanFrame);
+            }
+        }
+
+        scanFrame();
+    };
+
+    uploadButton.onclick = () => {
+        const fileInput = document.getElementById('postedFile');
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Please select a file.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const image = new Image();
+            image.src = e.target.result;
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                if (code) {
+                    resultText.innerText = code.data;
+                    resultDiv.style.display = 'block';
+                } else {
+                    alert('No QR code found in the image.');
+                }
+            };
+        };
+        reader.readAsDataURL(file);
+    };
+</script>

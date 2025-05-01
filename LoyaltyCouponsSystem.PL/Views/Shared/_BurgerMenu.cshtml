@@ -1,0 +1,277 @@
+﻿@using LoyaltyCouponsSystem.BLL.Service.Abstraction
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+@inject IAdminService _adminService
+<body>
+    <div id="burgerMenu" class="burger-menu-container d-md-none">
+        <button id="burgerMenuToggle" class="burger-menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div id="burgerMenuContent" class="burger-menu-content">
+            <ul class="nav flex-column">
+                <!-- Home -->
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Dashboard")" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Home
+                    </a>
+                </li>
+
+                <!-- QR Codes -->
+                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Generate QR Codes"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#mobileQrCodes" role="button" aria-expanded="false" aria-controls="mobileQrCodes">
+                            <i class="fas fa-qrcode"></i> QR Codes
+                        </a>
+                        <div class="collapse" id="mobileQrCodes">
+                            <ul class="nav flex-column ms-3">
+                                <li>
+                                    <a href="@Url.Action("DetailsOfCoupones", "GenerateQRCode")" class="nav-link">Generate QRs</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("TransactionHistory", "HistoryGenerated")" class="nav-link">Transaction Generated QRs</a>
+                                </li>
+                                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Approve Recieved Coupons"))
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Index", "ScanQrCode")" class="nav-link">Approve Scan</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                <!-- Exchange Permission -->
+                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Exchange Permissions"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#mobileExchangePermission" role="button" aria-expanded="false" aria-controls="mobileExchangePermission">
+                            <i class="fas fa-exchange-alt"></i> Exchange Permission
+                        </a>
+                        <div class="collapse" id="mobileExchangePermission">
+                            <ul class="nav flex-column ms-3">
+                                <li>
+                                    <a href="@Url.Action("AssignQRCode", "ExchangeOrder")" class="nav-link">Generate an Exchange Permission</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("AllTransactions", "Transaction")" class="nav-link">Exchange All Transactions</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                <!-- Deliver From Representative to Customer -->
+                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Deliver From Representative to Customer"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#mobileDeliverToCustomer" role="button" aria-expanded="false" aria-controls="mobileDeliverToCustomer">
+                            <i class="fas fa-exchange-alt"></i> Merchant receipt from the representative
+                        </a>
+                        <div class="collapse" id="mobileDeliverToCustomer">
+                            <ul class="nav flex-column ms-3">
+                                <li>
+                                    <a href="@Url.Action("Index", "DilverFromRepToCoust")" class="nav-link">Merchant Receipt</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Transaction", "DilverFromRepToCoust")" class="nav-link">All Transactions</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                <!-- Receive From Customer -->
+                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Receive From Customer"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#mobileReceiveFromCustomer" role="button" aria-expanded="false" aria-controls="mobileReceiveFromCustomer">
+                            <i class="fas fa-exchange-alt"></i> Receive from Customer
+                        </a>
+                        <div class="collapse" id="mobileReceiveFromCustomer">
+                            <ul class="nav flex-column ms-3">
+                                <li>
+                                    <a href="@Url.Action("ReturnItems", "ReceiveFromCustomer")" class="nav-link">Return Items</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("AllTransactions", "ReceiveFromCustomer")" class="nav-link">All Transactions</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                <!-- Manage Customers -->
+                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Manage Customers"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#mobileManageCustomers" role="button" aria-expanded="false" aria-controls="mobileManageCustomers">
+                            <i class="fas fa-users"></i> Manage Customers
+                        </a>
+                        <div class="collapse" id="mobileManageCustomers">
+                            <ul class="nav flex-column ms-3">
+                                <li>
+                                    <a href="@Url.Action("GetAllCustomers", "Customer")" class="nav-link">Manage Merchant</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("GetAllDistributors", "Distributor")" class="nav-link">Manage Distributor</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("GetAllTechnicians", "Technician")" class="nav-link">Manage Technician</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                <!-- Manage Users -->
+                @if (await _adminService.UserHasPermissionAsync(User.Identity.Name, "Manage Users"))
+                {
+                    <li class="nav-item">
+                        <a href="@Url.Action("ManageUsers", "Admin")" class="nav-link">
+                            <i class="fas fa-user-tie"></i> Manage Users
+                        </a>
+                    </li>
+                }
+
+                <!--This part is comment as it is not working when clicking on it-->
+
+                <!-- Log Out -->@*
+                <li class="nav-item mt-auto">
+                    <button id="logout-btn" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Log Out
+                    </button>
+                </li>*@
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+<style>
+    .burger-menu-container {
+        position: relative;
+    }
+
+    .burger-menu-toggle {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        font-size: 24px;
+        border-radius: 5px;
+        padding: 10px 15px;
+        z-index: 1040;
+        display: none; /* Hidden on desktops */
+    }
+
+    .burger-menu-content {
+        position: fixed;
+        top: 67px; /* Adjust as needed to move the content below the toggle button */
+        left: -100%;
+        width: 250px;
+        height: calc(100% - 60px); /* Account for the space above */
+        background-color: #343a40;
+        color: white;
+        transition: all 0.3s ease-in-out;
+        z-index: 1030;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+        .burger-menu-content .collapse .nav-link::before {
+            content: "• ";
+            color: #007bff; /* Match the text color or adjust for better visibility */
+            font-size: 18px; /* Slightly larger for emphasis */
+            margin-right: 5px; /* Spacing between dot and text */
+        }
+
+
+        .burger-menu-content.open {
+            left: 0;
+        }
+
+        .burger-menu-content .nav-link {
+            padding: 10px 15px;
+        }
+
+
+    .burger-menu-toggle.active {
+        display: block; /* Shown only on mobile devices */
+    }
+
+
+    .collapse {
+        transition: all 0.3s ease;
+    }
+
+
+    .burger-menu-content .nav-link.active {
+        background-color: #0056b3;
+        color: white;
+        font-weight: bold;
+    }
+
+
+    /* Ensure the menu does not appear on larger screens */
+    @@media (max-width: 768px) {
+        .burger-menu-toggle
+
+    {
+        display: block;
+    }
+
+    }
+</style>
+
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const burgerToggle = document.getElementById("burgerMenuToggle");
+        const burgerContent = document.getElementById("burgerMenuContent");
+        const logoutButton = document.getElementById("logout-btn");
+
+        // Toggle Burger Menu
+        burgerToggle.addEventListener("click", () => {
+            burgerContent.classList.toggle("open");
+        });
+
+        // Collapse all sections when the menu is closed
+        burgerToggle.addEventListener("click", () => {
+            if (!burgerContent.classList.contains("open")) {
+                const collapsibles = document.querySelectorAll(".collapse.show");
+                collapsibles.forEach((item) => item.classList.remove("show"));
+            }
+        });
+
+        // Logout Button Functionality
+        logoutButton.addEventListener("click", function () {
+            console.log("Logout button clicked"); // Debugging line
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of your session.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, log me out!",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const logoutForm = document.createElement("form");
+                    logoutForm.method = "POST";
+                    logoutForm.action = "/Account/Logout";
+                    document.body.appendChild(logoutForm);
+                    logoutForm.submit();
+                }
+            });
+        });
+    });
+</script>
+

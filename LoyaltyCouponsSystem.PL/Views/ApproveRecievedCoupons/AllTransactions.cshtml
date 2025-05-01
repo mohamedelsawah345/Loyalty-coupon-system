@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "All Transactions";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<h2>All Transactions</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Representative    </th>
+            <th>Governorate</th>
+            <th>Area</th>
+            <th>Created By</th>
+            <th>Created At</th>
+            <th>Scan</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coupon in ViewBag.Coupons as List<LoyaltyCouponsSystem.DAL.Entity.ApproveRecievedCoupons>)
+        {
+                <tr>
+                    <td>@coupon.ApplicationUser?.UserName</td> 
+                    <td>@coupon.Governorates?.Name</td> 
+                    <td>@coupon.Areas?.Name</td> 
+                    <td>@coupon.CreatedBy</td>
+                    <td>@coupon.Timestamp</td>
+                    <td>
+                        <!-- Add Edit and Delete buttons here, if necessary -->
+                        <a href="@Url.Action("Index", "ApproveRecievedCoupons", new { id = coupon.Id })" class="btn btn-primary">Scan</a>
+                    </td>
+                    <td>
+                        <!-- Example delete link -->
+                    <a href="@Url.Action("Delete", "ApproveRecievedCoupons", new { id = coupon.Id })" class="btn btn-primary">Detail</a>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

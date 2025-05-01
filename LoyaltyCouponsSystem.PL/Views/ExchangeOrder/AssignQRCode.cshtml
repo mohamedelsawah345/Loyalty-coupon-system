@@ -1,0 +1,599 @@
+﻿@model AssignmentViewModel
+
+@{
+    ViewData["Title"] = "Assign QR Codes";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<br />
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b>@SharedLocalizer["AllTransactionsExchangePermission"]</b></h1>
+        <p class="lead text-secondary"> @SharedLocalizer["AQRW"]</p>
+    </div>
+
+    <form asp-action="AssignQRCode" method="post" id="assignForm" class="shadow-lg p-4 bg-white rounded">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="CustomerCodeOrName" class="form-label"><b> @SharedLocalizer["SelectCustomer"]</b></label>
+                <select asp-for="SelectedCustomerCode" class="form-control select2" required>
+                    <option value="" disabled selected>@SharedLocalizer["SelectCustomer"]</option>
+                    @foreach (var customer in Model.Customers
+                    .GroupBy(c => new { c.Text, c.Value }) // Group by Text and Value
+                    .Select(g => g.First())) // Take the first record per group
+                    {
+                        <option value="@customer.Value">@customer.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="DistributorCodeOrName" class="form-label"><b> @SharedLocalizer["SelectDistributor"]</b></label>
+                <select asp-for="SelectedDistributorCode" class="form-control select2" required>
+                    <option value="" disabled selected>@SharedLocalizer["SelectDistributor"]</option>
+                    @foreach (var distributor in Model.Distributors
+                    .GroupBy(d => new { d.Text, d.Value }) // Group by Text and Value
+                    .Select(g => g.First())) // Take the first record per group
+                    {
+                        <option value="@distributor.Value">@distributor.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <br><br>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="governorateDropdown" class="form-label text-primary"><b>@SharedLocalizer["SelectGovernate"]</b></label>
+                <select id="governorateDropdown" name="GovernorateId" class="form-select" required>
+                    <option value="" disabled selected>@SharedLocalizer["SelectGovernate"]</option>
+                    @foreach (var governorate in Model.Governates)
+                    {
+                        <option value="@governorate.Value">@governorate.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="areaDropdown" class="form-label text-primary"><b>@SharedLocalizer["SelectArea"]</b></label>
+                <select id="areaDropdown" name="AreaId" class="form-select" required>
+                    <option value="" disabled selected>@SharedLocalizer["SelectArea"]</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+            <div class="col-md-6">
+                <label for="ExchangePermission" class="form-label"><b>@SharedLocalizer["ExchangePermissionNumber"]</b></label>
+                <input type="text" name="ExchangePermission" class="form-control" placeholder=@SharedLocalizer["ExchangePermissionNumber"] required />
+                <span id="exchangePermissionError" class="text-danger" style="display: none;"></span>
+            </div>
+        </div>
+
+        <div id="couponFieldsContainer" class="mt-4">
+            <div class="row g-3 align-items-center couponFields">
+                <div class="col-md-3">
+                    <label for="CouponSort" class="form-label"><b> @SharedLocalizer["Sort"]</b></label>
+                    <select name="Transactions[0].SelectedCouponSort" class="form-select" required>
+                        <option value="">@SharedLocalizer["Sort"]</option>
+                        @foreach (var sort in Model.CouponSorts)
+                        {
+                            <option value="@sort.Value">@sort.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="CouponType" class="form-label"><b> @SharedLocalizer["CouponType"]</b></label>
+                    <select name="Transactions[0].SelectedCouponType" class="form-select" required>
+                        <option value="">@SharedLocalizer["CouponType"]</option>
+                        @foreach (var type in Model.CouponTypes)
+                        {
+                            <option value="@type.Value">@type.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="SequenceStart" class="form-label"><b> @SharedLocalizer["StartSequence"]</b></label>
+                    <input type="text" name="Transactions[0].SequenceStart" class="form-control sequence-start" placeholder=@SharedLocalizer["StartSequence"] required />
+                </div>
+                <div class="col-md-3">
+                    <label for="SequenceEnd" class="form-label"><b>@SharedLocalizer["EndSequence"] </b></label>
+                    <input type="text" name="Transactions[0].SequenceEnd" class="form-control sequence-end" placeholder=@SharedLocalizer["EndSequence"] required />
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger removeFieldsButton"> @SharedLocalizer["Remove"]</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-outline-secondary" id="addFieldsButton"> @SharedLocalizer["AddAnother"]</button>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-custom">
+                <i class="fas fa-paper-plane"></i> @SharedLocalizer["Assign"]
+            </button>
+        </div>
+    </form>
+</div>
+
+<br />
+<br />
+
+@section Scripts {
+    <script>
+        // Helper function to protect the coupon prefix (identifier) from being removed
+        function attachPrefixProtection(field) {
+            const prefix = field.dataset.prefix;
+            if (!prefix) return;
+            // On input, force the value to always start with the prefix.
+            field.addEventListener("input", function () {
+                if (!this.value.startsWith(prefix)) {
+                    this.value = prefix + this.value.slice(prefix.length);
+                }
+            });
+            // On keydown, prevent deletion if the caret is at or before the prefix.
+            field.addEventListener("keydown", function (e) {
+                const caretPos = this.selectionStart;
+                if (caretPos <= prefix.length && (e.key === "Backspace" || e.key === "Delete")) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Coupon identifier mapping
+        document.addEventListener("DOMContentLoaded", function () {
+            const couponIdentifier = {
+                "راك ثيرم": "1",
+                "صرف جي تكس": "2",
+                "اقطار كبيرة وهودذا": "3",
+                "كعب راك ثيرم": "4",
+                "كعب صرف جي تكس": "5",
+                "كعب اقطار كبيرة وهودذا": "6"
+            };
+
+            // For all coupon type dropdowns on page load
+            document.querySelectorAll('[name$="SelectedCouponType"]').forEach(function (couponTypeDropdown) {
+                couponTypeDropdown.addEventListener("change", function () {
+                    const couponType = this.value;
+                    const fieldGroup = this.closest(".couponFields");
+                    const sequenceStartField = fieldGroup.querySelector(".sequence-start");
+                    const sequenceEndField = fieldGroup.querySelector(".sequence-end");
+
+                    if (couponIdentifier[couponType]) {
+                        const prefix = couponIdentifier[couponType];
+                        sequenceStartField.value = prefix;
+                        sequenceStartField.dataset.prefix = prefix;
+                        sequenceEndField.value = prefix;
+                        sequenceEndField.dataset.prefix = prefix;
+
+                        attachPrefixProtection(sequenceStartField);
+                        attachPrefixProtection(sequenceEndField);
+                    } else {
+                        sequenceStartField.value = "";
+                        sequenceEndField.value = "";
+                        delete sequenceStartField.dataset.prefix;
+                        delete sequenceEndField.dataset.prefix;
+                    }
+                });
+            });
+        });
+
+        // Validate start and end sequence values
+        document.getElementById("assignForm").addEventListener("submit", async function (event) {
+            const sequenceFields = document.querySelectorAll(".couponFields");
+            let isValid = true;
+            let errorMessages = [];
+
+            // Clear previous error styles and messages
+            sequenceFields.forEach(field => {
+                const startInput = field.querySelector('[name$="SequenceStart"]');
+                const endInput = field.querySelector('[name$="SequenceEnd"]');
+                startInput.classList.remove("is-invalid");
+                endInput.classList.remove("is-invalid");
+
+                const errorMessage = field.querySelector(".sequence-error");
+                if (errorMessage) {
+                    errorMessage.textContent = "";
+                    errorMessage.style.display = "none";
+                }
+            });
+
+            for (const field of sequenceFields) {
+                const startInput = field.querySelector('[name$="SequenceStart"]');
+                const endInput = field.querySelector('[name$="SequenceEnd"]');
+                const startValue = parseInt(startInput.value, 10);
+                const endValue = parseInt(endInput.value, 10);
+
+                let errorMessage = field.querySelector(".sequence-error");
+                if (!errorMessage) {
+                    errorMessage = document.createElement("div");
+                    errorMessage.classList.add("sequence-error");
+                    endInput.parentNode.appendChild(errorMessage);
+                }
+
+                if (startValue >= endValue) {
+                    isValid = false;
+                    errorMessages.push("End Sequence Number must be strictly greater than Start Sequence Number.");
+                    errorMessage.textContent = "End Sequence Number must be strictly greater than Start Sequence Number.";
+                    errorMessage.style.display = "block";
+
+                    startInput.classList.add("is-invalid");
+                    endInput.classList.add("is-invalid");
+                } else {
+                    const response = await fetch("/ExchangeOrder/CheckSequenceAvailability", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ startSequence: startValue, endSequence: endValue }),
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.isAvailable) {
+                        isValid = false;
+                        errorMessages.push("The sequence range is already used. Please choose a different range.");
+                        errorMessage.textContent = "The sequence range is already used. Please choose a different range.";
+                        errorMessage.style.display = "block";
+
+                        startInput.classList.add("is-invalid");
+                        endInput.classList.add("is-invalid");
+                    } else {
+                        errorMessage.style.display = "none";
+                        startInput.classList.remove("is-invalid");
+                        endInput.classList.remove("is-invalid");
+                    }
+                }
+            }
+
+            // Check Exchange Permission uniqueness via AJAX
+            const exchangePermissionInput = document.querySelector('[name="ExchangePermission"]');
+            const exchangePermission = exchangePermissionInput.value;
+
+            const isDuplicate = await fetch("/ExchangeOrder/CheckExchangePermission", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ exchangePermission: exchangePermission })
+            }).then(response => response.json());
+
+            if (isDuplicate) {
+                isValid = false;
+                errorMessages.push(`Exchange Permission Number ${exchangePermission} is already used.`);
+                exchangePermissionInput.classList.add("is-invalid");
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: errorMessages.join('<br>'),
+                    showConfirmButton: true,
+                });
+            }
+        });
+
+        // Add new coupon row and ensure data binding and prefix protection
+        document.addEventListener("DOMContentLoaded", function () {
+            const couponIdentifier = {
+                "راك ثيرم": "1",
+                "صرف جي تكس": "2",
+                "اقطار كبيرة وهودذا": "3",
+                "كعب راك ثيرم": "4",
+                "كعب صرف جي تكس": "5",
+                "كعب اقطار كبيرة وهودذا": "6"
+            };
+
+            let index = 1; // index 0 is used for the initially rendered row
+
+            // Hide the remove button on the first coupon row (if desired)
+            const firstFieldGroup = document.querySelector(".couponFields");
+            if (firstFieldGroup) {
+                const firstRemoveButton = firstFieldGroup.querySelector(".removeFieldsButton");
+                if (firstRemoveButton) {
+                    firstRemoveButton.style.display = "none";
+                }
+            }
+
+                        document.getElementById("addFieldsButton").addEventListener("click", function () {
+            const container = document.getElementById("couponFieldsContainer");
+            const newFields = document.createElement("div");
+            newFields.classList.add("row", "g-3", "align-items-center", "couponFields", "mt-2");
+
+            newFields.innerHTML = `
+                <div class="col-md-3">
+                    <label for="CouponSort" class="form-label fw-bold">Coupon Sort</label>
+                    <select name="Transactions[${index}].SelectedCouponSort" class="form-select" required>
+                        <option value="">Select Coupon Sort</option>
+        @foreach (var sort in Model.CouponSorts)
+        {
+                                <option value="@sort.Value">@sort.Text</option>
+        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="CouponType" class="form-label fw-bold">Coupon Type</label>
+                    <select name="Transactions[${index}].SelectedCouponType" class="form-select coupon-type" required>
+                        <option value="">Select Coupon Type</option>
+        @foreach (var type in Model.CouponTypes)
+        {
+                                <option value="@type.Value">@type.Text</option>
+        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="SequenceStart" class="form-label fw-bold">Start Sequence</label>
+                    <input type="text" name="Transactions[${index}].SequenceStart" class="form-control sequence-start" placeholder="Enter start sequence" required />
+                </div>
+                <div class="col-md-3">
+                    <label for="SequenceEnd" class="form-label fw-bold">End Sequence</label>
+                    <input type="text" name="Transactions[${index}].SequenceEnd" class="form-control sequence-end" placeholder="Enter end sequence" required />
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger removeFieldsButton">Remove</button>
+                </div>
+            `;
+
+            container.appendChild(newFields);
+
+            const couponTypeDropdown = newFields.querySelector(".coupon-type");
+            const sequenceStartField = newFields.querySelector(".sequence-start");
+            const sequenceEndField = newFields.querySelector(".sequence-end");
+
+            // Copy previous values (unchanged) to the new fields but allow changes on new fields
+            const previousTransaction = document.querySelectorAll('.couponFields')[index - 1];
+            if (previousTransaction) {
+                const prevSelectedCouponSort = previousTransaction.querySelector("select[name*='SelectedCouponSort']").value;
+                const prevSelectedCouponType = previousTransaction.querySelector("select[name*='SelectedCouponType']").value;
+                const prevSequenceStart = previousTransaction.querySelector("input[name*='SequenceStart']").value;
+                const prevSequenceEnd = previousTransaction.querySelector("input[name*='SequenceEnd']").value;
+
+                // Copy values to new fields (the previous ones will remain unchanged when submitting)
+                newFields.querySelector("select[name*='SelectedCouponSort']").value = prevSelectedCouponSort;
+                newFields.querySelector("select[name*='SelectedCouponType']").value = prevSelectedCouponType;
+                newFields.querySelector("input[name*='SequenceStart']").value = prevSequenceStart;
+                newFields.querySelector("input[name*='SequenceEnd']").value = prevSequenceEnd;
+            }
+
+            couponTypeDropdown.addEventListener("change", function () {
+                const couponType = this.value;
+                const prefix = couponIdentifier[couponType];
+
+                if (prefix) {
+                    sequenceStartField.value = prefix;
+                    sequenceStartField.dataset.prefix = prefix;
+                    sequenceEndField.value = prefix;
+                    sequenceEndField.dataset.prefix = prefix;
+
+                    sequenceStartField.setAttribute("maxlength", 10);
+                    sequenceStartField.addEventListener("input", function () {
+                        if (!this.value.startsWith(prefix)) {
+                            this.value = prefix;
+                        }
+                    });
+
+                    sequenceEndField.setAttribute("maxlength", 10);
+                    sequenceEndField.addEventListener("input", function () {
+                        if (!this.value.startsWith(prefix)) {
+                            this.value = prefix;
+                        }
+                    });
+                } else {
+                    sequenceStartField.value = "";
+                    sequenceEndField.value = "";
+                    delete sequenceStartField.dataset.prefix;
+                    delete sequenceEndField.dataset.prefix;
+                }
+            });
+
+            index++;
+        });
+
+
+            // Remove coupon row
+            document.addEventListener("click", function (event) {
+                if (event.target.classList.contains("removeFieldsButton")) {
+                    const fieldGroup = event.target.closest(".couponFields");
+                    fieldGroup.remove();
+
+                    const rows = document.querySelectorAll(".couponFields");
+                    if (rows.length === 1) {
+                        const firstRemoveButton = rows[0].querySelector(".removeFieldsButton");
+                        if (firstRemoveButton) {
+                            firstRemoveButton.style.display = "none";
+                        }
+                    }
+                }
+            });
+
+            // For any existing new rows, ensure protection is attached when coupon type changes
+            document.querySelectorAll(".coupon-type").forEach(function (dropdown) {
+                dropdown.addEventListener("change", function () {
+                    const fieldGroup = this.closest(".couponFields");
+                    const sequenceStartField = fieldGroup.querySelector(".sequence-start");
+                    const sequenceEndField = fieldGroup.querySelector(".sequence-end");
+                    const couponType = this.value;
+                    const prefix = couponIdentifier[couponType];
+
+                    if (prefix) {
+                        sequenceStartField.value = prefix;
+                        sequenceStartField.dataset.prefix = prefix;
+                        sequenceEndField.value = prefix;
+                        sequenceEndField.dataset.prefix = prefix;
+                        attachPrefixProtection(sequenceStartField);
+                        attachPrefixProtection(sequenceEndField);
+                    }
+                });
+            });
+        });
+
+        // Governate to City AJAX (do not edit as per instruction)
+        $(document).ready(function () {
+            $('#governorateDropdown').change(function () {
+                var governorateId = $(this).val();
+                $('#SelectedCity').empty().append('<option value="" disabled selected>Loading...</option>');
+                $('#loadingSpinner').show(); // Show spinner
+
+                if (governorateId) {
+                    $.ajax({
+                        url: '/GetAreasByGovernorate/' + governorateId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log("API Response:", data);
+                            $('#areaDropdown').empty().append('<option value="" disabled selected>Select Area</option>');
+                            $('#loadingSpinner').hide();
+                            if (data.length > 0) {
+                                $.each(data, function (index, area) {
+                                    console.log("Area:", area);
+                                    $('#areaDropdown').append('<option value="' + area.id + '">' + area.name + '</option>');
+                                });
+                            } else {
+                                $('#areaDropdown').append('<option value="" disabled>No areas found</option>');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Error:", xhr.responseText);
+                            $('#loadingSpinner').hide();
+                            $('#areaDropdown').empty().append('<option value="" disabled>No areas found</option>');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+}
+
+<style>
+    .form-label {
+        color: #007bff !important;
+        font-weight: bold;
+    }
+
+    .form-control, .form-select {
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 10px rgba(0, 86, 179, 0.3);
+        }
+
+    label {
+        font-weight: bold;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 30px;
+        border: 2px solid #007bff;
+        color: #007bff;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 8px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-danger {
+        border-radius: 20px;
+    }
+
+    .couponFields {
+        border-bottom: 1px dashed #e0e0e0;
+        padding-bottom: 15px;
+        margin-bottom: 10px;
+    }
+
+    .container h1 {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+    }
+
+    .text-danger {
+        font-size: 0.875em;
+        margin-top: 5px;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px;
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 38px;
+        color: #495057;
+        padding-left: 8px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
+    }
+
+    hr {
+        border-top: 2px solid #808080;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sequence-error {
+        margin-top: 5px;
+        font-size: 0.875em;
+        color: #dc3545;
+        position: relative;
+    }
+</style>

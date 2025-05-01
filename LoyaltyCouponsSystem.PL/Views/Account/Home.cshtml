@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = @SharedLocalizer["WelcomePage"];
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <style>
+        /* Background image style */
+        body {
+            background-image: url('path/to/your-image.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white; /* Fallback text color in case of non-image */
+        }
+
+        /* Styling for the content container */
+        .container {
+            padding: 20px;
+            margin-top: 100px; /* Moves the content down a bit */
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: #003366; /* Dark blue color */
+        }
+
+        p {
+            font-size: 1.25rem;
+            color: #003366; /* Dark blue color */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Welcome to the Coupon System!</h2>
+        <p>We are excited to have you here. Explore the latest coupons, offers, and more.</p>
+
+        <!-- Custom greeting based on the user's identity -->
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p>Hello, @User.Identity.Name! Welcome back.</p>
+        }
+        else
+        {
+            <p>Please <a href="@Url.Action("Login", "Account")" class="btn btn-primary">login</a> to access your dashboard.</p>
+        }
+    </div>
+
+</body>
+</html>

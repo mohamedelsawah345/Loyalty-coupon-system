@@ -1,0 +1,338 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.Account
+@model AddUserViewModel;
+
+@{
+    ViewData["Title"] = "AddUser";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center" style="background: linear-gradient(135deg, #1b6ec2, #87ceeb);">
+    <div class="card shadow border-0" style="max-width: 600px; width: 100%; background-color: rgba(255, 255, 255, 0.95); border-radius: 15px;">
+        <div class="card-body p-4">
+            <h2 class="text-center mb-4" style="color: #1b6ec2; font-weight: 700;">User Registeration</h2>
+            <form asp-action="AddUser" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <!-- Name And Natioal ID -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label">@SharedLocalizer["Name"]</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NationalID" class="form-label">@SharedLocalizer["NationalID"]</label>
+                        <input asp-for="NationalID" class="form-control" />
+                        <span asp-validation-for="NationalID" class="text-danger"></span>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">@SharedLocalizer["PhoneNumber"]</label>
+                        <div class="input-group">
+                            <span class="input-group-text">+2</span>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="OptionalPhoneNumber" class="form-label">@SharedLocalizer["PhoneNumber2"]</label>
+                        <div class="input-group">
+                            <span class="input-group-text">+2</span>
+                            <input asp-for="OptionalPhoneNumber" class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Governorats And Cities -->
+                    <div class="col-md-6 mb-3">
+                        <label for="Governorate" class="form-label">@SharedLocalizer["Governorate"]</label>
+                        <select id="Governorate" name="Governorate" class="form-select">
+                            <option selected disabled>@SharedLocalizer["SelectGovernate"]</option>
+                            <option value="Aswan">Aswan</option>
+                            <option value="Assiut">Assiut</option>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Ismailia">Ismailia</option>
+                            <option value="Luxor">Luxor</option>
+                            <option value="Red Sea">Red Sea</option>
+                            <option value="Beheira">Beheira</option>
+                            <option value="Giza">Giza</option>
+                            <option value="Dakahlia">Dakahlia</option>
+                            <option value="Suez">Suez</option>
+                            <option value="Sharqia">Sharqia</option>
+                            <option value="Gharbia">Gharbia</option>
+                            <option value="Cairo">Cairo</option>
+                            <option value="Qalyubia">Qalyubia</option>
+                            <option value="New Valley">New Valley</option>
+                            <option value="Matrouh">Matrouh</option>
+                            <option value="Minya">Minya</option>
+                            <option value="Fayoum">Fayoum</option>
+                            <option value="Beni Suef">Beni Suef</option>
+                            <option value="Kafr El Sheikh">Kafr El Sheikh</option>
+                            <option value="Port Said">Port Said</option>
+                            <option value="Damietta">Damietta</option>
+                            <option value="Menoufia">Menoufia</option>
+                            <option value="Qena">Qena</option>
+                            <option value="Sohag">Sohag</option>
+                            <option value="South Sinai">South Sinai</option>
+                            <option value="North Sinai">North Sinai</option>
+                        </select>
+                        <span asp-validation-for="Governorate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="City" class="form-label">@SharedLocalizer["Area"]</label>
+                        <select id="City" name="City" class="form-select">
+                            <option selected disabled>@SharedLocalizer["SelectArea"]</option>
+                        </select>
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <!-- Assign Role -->
+                    <div class="form-group">
+                        <label for="Role"> @SharedLocalizer["SelectRole"]</label>
+                        <select asp-for="Role" class="form-control" asp-items="@(new SelectList(Model.AvailableRoles))" id="roleDropdown">
+                            <option value="">-- @SharedLocalizer["SelectRole"]--</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                    <br />
+
+                    <!-- Password -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label"> @SharedLocalizer["Password"]</label>
+                        <div class="input-group">
+                            <input asp-for="Password" class="form-control" type="password" id="passwordField" />
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordField">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label"> @SharedLocalizer["ConfirmPassword"]</label>
+                        <div class="input-group">
+                            <input asp-for="ConfirmPassword" class="form-control" type="password" id="confirmPasswordField" />
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="confirmPasswordField">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3"> @SharedLocalizer["Register"]</button>
+
+                <div class="text-center mt-4">
+                    <p style="font-size: 0.9rem; font-weight: 600; color: #333;">
+                        Already have an account?
+                        <a asp-controller="Account" asp-action="Login" class="text-decoration-none"
+                           style="color: #1b6ec2; font-weight: bold; transition: color 0.3s;">
+                            Login
+                        </a>
+                    </p>
+                    <a asp-controller="Admin" asp-action="manageusers" class="btn btn-outline-primary mt-2"
+                       style="font-size: 0.85rem; font-weight: 600; border-radius: 30px; padding: 8px 20px;">
+                        Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* @if (ViewBag.RegistrationSuccess == true)
+{
+    <div class="modal fade show" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-modal="true" role="dialog" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="checkmark-circle">
+                        <div class="checkmark"></div>
+                    </div>
+                    <h5 class="mb-3" style="color: #1b6ec2; font-weight: bold;">Registration Pending</h5>
+                    <p>Your registration request has been successfully submitted and is pending approval by the super admin.</p>
+                </div>
+                <div class="modal-footer">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">OK</a>
+                </div>
+            </div>
+        </div>
+    </div>
+} *@
+
+<style>
+    .modal-content {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border: none;
+    }
+
+    .checkmark-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #28a745;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 20px;
+        position: relative;
+    }
+
+        .checkmark-circle:after {
+            content: '';
+            width: 20px;
+            height: 40px;
+            border: solid white;
+            border-width: 0 5px 5px 0;
+            position: absolute;
+            transform: rotate(45deg);
+        }
+
+    .btn-primary {
+        background-color: #1b6ec2;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        padding: 10px 30px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #14548a;
+        }
+
+    .modal-body {
+        padding: 20px 30px;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .modal-footer {
+        border: none;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial.cshtml")
+    <script>
+
+                document.getElementById("NationalID").addEventListener("blur", function () {
+            const nationalID = this.value;
+
+            fetch(`/api/check-national-id?nationalID=${nationalID}`)
+                .then(response => response.json())
+                .then(data => {
+                    const nationalIDError = document.getElementById("nationalIDError");
+                    if (!data.isUnique) {
+                        if (!nationalIDError) {
+                            const errorSpan = document.createElement("span");
+                            errorSpan.id = "nationalIDError";
+                            errorSpan.style.color = "red";
+                            errorSpan.textContent = "This National ID is already in use.";
+                            this.parentNode.appendChild(errorSpan);
+                        }
+                    } else {
+                        if (nationalIDError) {
+                            nationalIDError.remove();
+                        }
+                    }
+                });
+        });
+
+             document.getElementById("PhoneNumber").addEventListener("blur", function () {
+            const phoneNumber = this.value;
+
+            fetch(`/api/check-phone-number?phoneNumber=${phoneNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    const phoneNumberError = document.getElementById("phoneNumberError");
+                    if (!data.isUnique) {
+                        if (!phoneNumberError) {
+                            const errorSpan = document.createElement("span");
+                            errorSpan.id = "phoneNumberError";
+                            errorSpan.style.color = "red";
+                            errorSpan.textContent = "This phone number is already in use.";
+                            this.parentNode.appendChild(errorSpan);
+                        }
+                    } else {
+                        if (phoneNumberError) {
+                            phoneNumberError.remove();
+                        }
+                    }
+                });
+        });
+
+
+        document.getElementById("Governorate").addEventListener("change", function () {
+            const governorate = this.value;
+            const cityDropdown = document.getElementById("City");
+
+            cityDropdown.innerHTML = '<option selected disabled>Select City</option>';
+
+            fetch(`/api/get-cities?governorate=${governorate}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(city => {
+                        const option = document.createElement("option");
+                        option.value = city;
+                        option.textContent = city;
+                        cityDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching cities:', error));
+        });
+
+
+            // Get the dropdown element
+        const roleDropdown = document.getElementById("roleDropdown");
+
+        // Add an event listener to disable the first option on focus
+        roleDropdown.addEventListener("focus", function () {
+            const firstOption = this.querySelector('option[value=""]');
+            if (firstOption) {
+                firstOption.disabled = true; // Disable the first option
+            }
+        });
+
+        // Add an event listener to re-enable the first option when no value is selected
+        roleDropdown.addEventListener("blur", function () {
+            if (!this.value) {
+                const firstOption = this.querySelector('option[value=""]');
+                if (firstOption) {
+                    firstOption.disabled = false; // Re-enable the first option if nothing is selected
+                }
+            }
+        });
+
+    </script>
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    document.querySelectorAll(".toggle-password").forEach(button => {
+        button.addEventListener("click", function () {
+            const targetId = this.getAttribute("data-target");
+            const inputField = document.getElementById(targetId);
+            const icon = this.querySelector("i");
+
+            if (inputField.type === "password") {
+                inputField.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                inputField.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        });
+    });
+</script>

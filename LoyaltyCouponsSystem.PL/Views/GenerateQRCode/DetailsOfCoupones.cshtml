@@ -1,0 +1,472 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.QRCode
+@model QRCodeDetailsViewModel
+@{
+    ViewData["Title"] = "QR Code Generator";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+<link rel="stylesheet" href="~/assets/css/responsive.css" />
+
+<div class="container mt-5">
+    <div style="direction: rtl; text-align: right;">
+        <h2> @SharedLocalizer["GenerateQR"]</h2>
+    </div>
+
+    <form asp-controller="GenerateQRCode" asp-action="DetailsOfCoupones" method="post">
+        <div class="container">
+            <div class="row g-3" style="direction: rtl; text-align: right;">
+                <!-- نوع الكوبون -->
+                <div class="col-md-6">
+                    <label for="typeOfCoupon" class="form-label"> @SharedLocalizer["SeclectTypeOfCoupon"] </label>
+                    <select id="typeOfCoupon" asp-for="TypeOfCoupon" class="form-select" aria-label="Default select example" required>
+                        <option disabled selected value="">@SharedLocalizer["SeclectTypeOfCoupon"]</option>
+                        <option value="1">راك ثيرم</option>
+                        <option value="2">صرف جي تكس</option>
+                        <option value="3">اقطار كبيرة وهودذا</option>
+                        <option value="4">كعب راك ثيرم</option>
+                        <option value="5">كعب صرف جي تكس</option>
+                        <option value="6">كعب اقطار كبيرة وهودذا</option>
+                    </select>
+                    <span asp-validation-for="TypeOfCoupon" class="text-danger"></span>
+                </div>
+
+
+                <!-- القيمة -->
+                <div class="col-md-6">
+                    <label for="value" class="form-label"> @SharedLocalizer["Value"]</label>
+                    <input type="number" class="form-control" id="value" name="Value" value="50" min="1" required />
+                </div>
+
+                <!-- المحافظة -->
+                <div class="col-md-6">
+                    <label asp-for="GovernorateId" class="form-label"> @SharedLocalizer["SelectGovernate"] </label>
+                    <select class="form-select" asp-for="GovernorateId" asp-items="@(new SelectList(Model.governorates,"Id","Name"))">
+                        <option disabled selected>@SharedLocalizer["SelectGovernate"]</option>
+                    </select>
+                </div>
+
+                <!-- المنطقة -->
+                <div class="col-md-6">
+                    <label asp-for="AreaId" class="form-label"> @SharedLocalizer["SelectArea"]  </label>
+                    <select class="form-select" asp-for="AreaId" asp-items="@(new SelectList(Model.Areas,"Id","Name"))">
+                        <option disabled selected>@SharedLocalizer["SelectArea"] </option>
+                    </select>
+                </div>
+
+                <!-- العدد -->
+                <div class="col-md-6">
+                    <label for="Count" class="form-label">@SharedLocalizer["SelectNumber"]:</label>
+                    <input type="number" class="form-control" id="Count" name="Count" required>
+                </div>
+
+                <!-- مسلسل الكوبون -->
+                <div class="col-md-6 serial-number-container">
+                    <label for="SerialNumber" class="form-label"> @SharedLocalizer["sequence"] </label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="currentYear"></span>
+                        <input type="text" class="form-control" id="SerialNumber" name="Serialnumber" required>
+                    </div>
+                    <div id="serialNumberErrorContainer">
+                        <span id="serialNumberError" class="text-danger d-none"></span>
+                    </div> <!-- This is where the error message will appear -->
+                </div>
+
+
+
+                <!-- زر الإرسال -->
+                <div class="text-center">
+                    <button type="submit" id="submitButton" class="btn btn-custom">
+                        <i class="fas fa-qrcode"></i>  @SharedLocalizer["GQRS"]
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<style>
+    /* Full-Width Layout */
+    .container {
+        max-width: 100%;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    /* Form Layout - Centered and Expanded */
+    form {
+        background-color: transparent;
+        padding: 40px;
+        margin: auto;
+        width: 100%;
+        max-width: 1200px; /* Increase width for better spacing */
+    }
+
+    /* Page Title */
+    h2 {
+        font-size: 42px;
+        color: #007bff;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    /* 🆕 Updated Labels */
+    .form-label {
+        font-size: 18px;
+        font-weight: bold; /* Make labels bold */
+        color: #007bff !important; /* Set labels to primary Bootstrap color */
+    }
+
+    /* Inputs and Select Fields */
+    .form-control, .form-select {
+        border-radius: 20px;
+        padding: 15px;
+        font-size: 18px;
+        border: 1px solid #ced4da;
+        background-color: #fff;
+        transition: all 0.3s ease;
+        width: 100%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Focus Effect */
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+    /* Dropdown Arrow Styling */
+    .form-select {
+        background-position: left 20px center;
+        padding-right: 20px !important;
+        background-size: 1.5rem;
+    }
+
+    /* Two Fields Per Row */
+    .row.g-3 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: space-between;
+    }
+
+        .row.g-3 > .col-md-6 {
+            flex: 0 0 48%;
+            max-width: 48%;
+        }
+
+    /* Serial Number Container */
+    .serial-number-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    /* Fix Serial Number Field Shrinking Issue */
+    .input-group {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 10px;
+        width: 100%;
+    }
+
+        /* Adjust Input Size */
+        .input-group .form-control {
+            flex-grow: 1;
+            min-width: 200px;
+            max-width: 100%;
+        }
+
+    /* Serial Number Box */
+    .input-group-text {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border-radius: 15px 0 0 15px;
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    /* Ensure Error Messages Appear Below the Input */
+    #serialNumberErrorContainer {
+        width: 100%;
+    }
+
+    .text-danger {
+        font-size: 14px;
+        font-weight: bold;
+        color: red;
+        margin-top: 5px;
+        display: block;
+        text-align: right;
+        white-space: normal;
+    }
+
+    /* Large Submit Button */
+    .btn-custom {
+        padding: 15px 30px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 20px;
+        border: none;
+        border-radius: 40px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 30px;
+        width: 100%;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .btn-custom i {
+            font-size: 24px;
+        }
+
+    /* Responsive Styling for Mobile Devices */
+    @@media (max-width: 768px) {
+        /* Adjust container padding and form width */
+        .container
+
+    {
+        padding: 15px;
+        width: 100%;
+    }
+
+    form {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    /* Make input fields full-width */
+    .form-control, .form-select {
+        font-size: 16px;
+        padding: 12px;
+        width: 100%;
+    }
+
+    /* Adjust dropdown arrow */
+    .form-select {
+        background-size: 1.2rem;
+        padding-right: 15px !important;
+    }
+
+    /* Stack form elements vertically */
+    .row.g-3 {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+        .row.g-3 > .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+    /* Serial number container fixes */
+    .serial-number-container {
+        width: 100%;
+    }
+
+        /* Reverse serial number input and sequence on mobile */
+        .serial-number-container .input-group {
+            flex-direction: row-reverse !important;
+        }
+
+    /* Adjust sequence box styling */
+    .input-group-text {
+        font-size: 16px;
+        padding: 10px;
+            border-radius: 15px 0 0 15px;  /* Ensures correct styling in reversed order */
+    }
+
+    /* Center and resize the submit button */
+    .btn-custom {
+        font-size: 18px;
+        padding: 12px;
+        width: 100%;
+        max-width: 300px;
+        display: block;
+        margin: 20px auto;
+    }
+
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let maxSerialNumber = 0;
+            const couponSelect = document.getElementById('typeOfCoupon');
+            const serialNumberInput = $("#SerialNumber");
+            const serialNumberError = $("#serialNumberError"); // Select error message span
+            const serialNumberErrorContainer = $("#serialNumberErrorContainer"); // Select error container div
+            const submitButton = $("#submitButton");
+
+            // جلب الرقم التسلسلي الأعلى عند تغيير نوع الكوبون
+            couponSelect.addEventListener('change', function () {
+                const selectedValue = couponSelect.value;
+
+                if (selectedValue) {
+                    // جلب الرقم التسلسلي بناءً على نوع الكوبون
+                    $.get(`/GenerateQRCode/GetMaxSerialNumber?typeOfCoupon=${selectedValue}`, function (data) {
+                        maxSerialNumber = parseInt(data) || 0; // إذا لم تكن هناك بيانات، يتم ضبط القيمة على 0
+                    }).fail(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'حدث خطأ',
+                            text: 'حدث خطأ أثناء جلب الرقم التسلسلي.',
+                        });
+                    });
+                } else {
+                    maxSerialNumber = 0; // إعادة التعيين إذا لم يتم اختيار نوع الكوبون
+                }
+            });
+
+            // تحقق من الرقم المدخل عند فقدان التركيز
+            serialNumberInput.on("blur", function () {
+                const enteredSerial = parseInt(serialNumberInput.val());
+                const formattedMaxSerial = maxSerialNumber.toString().padStart(7, '0'); // Format the max serial number
+
+                if (isNaN(enteredSerial) || enteredSerial <= maxSerialNumber) {
+                    // عرض رسالة الخطأ داخل div الجديد وليس بعد input
+                    serialNumberError.html(
+                        'الرقم المدخل أقل من أعلى رقم مسلسل (' + formattedMaxSerial + '). يرجى إدخال رقم أكبر.'
+                    );
+                    serialNumberError.removeClass("d-none"); // Show the error
+                } else {
+                    serialNumberError.addClass("d-none"); // Hide the error if valid
+                }
+            });
+
+            // منع إرسال النموذج إذا كانت الفاليديشن غير صحيحة
+            $("form").on("submit", function (e) {
+                const enteredSerial = parseInt(serialNumberInput.val());
+
+                // تحقق من الرقم التسلسلي
+                if (isNaN(enteredSerial) || enteredSerial <= maxSerialNumber) {
+                    e.preventDefault(); // منع الإرسال
+                    serialNumberError.removeClass("d-none"); // Show error message if still invalid
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'تحقق من الرقم التسلسلي',
+                        text: 'الرجاء التأكد من صحة الرقم التسلسلي.',
+                    });
+                    return false;
+                }
+
+                // تعطيل الزر لمنع الإرسال المتكرر
+                submitButton.prop("disabled", true).text("جاري الإرسال...");
+
+                // إرسال الطلب
+                $.post($(this).attr('action'), $(this).serialize())
+                    .done(function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم بنجاح',
+                            text: 'تم إنشاء الكوبونات بنجاح!',
+                        }).then(() => {
+                            // مسح محتويات الصفحة
+                            document.body.innerHTML = '';
+
+                            // حفظ حالة في localStorage لتحديد أن الصفحة تحتاج لإعادة التوجيه بعد إعادة التحميل
+                            localStorage.setItem('redirectAfterReload', 'true');
+
+                            // إعادة تحميل الصفحة
+                            location.reload();
+                        });
+                    })
+                    .fail(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'حدث خطأ',
+                            text: 'حدث خطأ أثناء إنشاء الكوبونات.',
+                        });
+                        submitButton.prop("disabled", false).text("إنشاء الكوبونات"); // إعادة تمكين الزر
+                    });
+
+                return false; // منع الإرسال الافتراضي للنموذج
+            });
+
+
+            window.onload = function () {
+                // التحقق إذا كانت الحالة محفوظة في localStorage
+                if (localStorage.getItem('redirectAfterReload') === 'true') {
+                    // حذف الحالة من localStorage لتجنب التوجيه في المرات القادمة
+                    localStorage.removeItem('redirectAfterReload');
+
+                    // إعادة التوجيه إلى الأكشن المطلوب
+                    window.location.href = '/HistoryGenerated/TransactionHistory';
+                }
+            };
+
+
+
+
+            // باقي الأكواد...
+
+            // Handle governorate and area changes
+            $('#GovernorateId').change(function () {
+                var GovernorateId = $(this).val();
+                var AreaList = $('#AreaId');
+
+                AreaList.empty();
+                AreaList.append('<option>@SharedLocalizer["SelectArea"]</option>');
+                if (GovernorateId !== '') {
+                    $.ajax({
+                        url: '/GenerateQRCode/GetAreas?GovernorateId=' + GovernorateId,
+                        success: function (areas) {
+                            $.each(areas, function (i, area) {
+                                AreaList.append($('<option></option>').attr('value', area.id).text(area.name));
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'حدث خطأ',
+                                text: 'حدث خطأ أثناء تحميل المناطق.',
+                            });
+                        }
+                    });
+                }
+            });
+
+            const year = new Date().getFullYear() % 100; // آخر رقمين من السنة
+            const currentYearSpan = document.getElementById('currentYear');
+
+            couponSelect.addEventListener('change', () => {
+                const selectedValue = parseInt(couponSelect.value); // القيمة المختارة من الكوبون
+                if (!isNaN(selectedValue)) {
+                    const result = selectedValue * 100 + year; // دمج السنة مع نوع الكوبون
+                    currentYearSpan.innerText = result; // عرض الناتج
+                } else {
+                    currentYearSpan.innerText = year; // لو مفيش اختيار
+                }
+            });
+
+            currentYearSpan.innerText = year;
+        });
+    </script>
+
+}
+

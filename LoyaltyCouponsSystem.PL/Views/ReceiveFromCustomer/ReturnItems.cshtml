@@ -1,0 +1,211 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.ReceiveFromCustomer
+@{
+    ViewData["Title"] = "Return Items";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+@model ReceiveFromCustomerViewModel
+
+<!-- Main Content -->
+<div class="container mt-5">
+
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b> @SharedLocalizer["ReceiveFromCustomer"] </b></h1>
+        <p class="lead text-secondary">@SharedLocalizer["EAS"].</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form method="post" action="@Url.Action("ReturnItems", "ReceiveFromCustomer")">
+                <!-- Success and Error Messages -->
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success text-center">@TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger text-center">@TempData["Error"]</div>
+                }
+
+                <!-- Row 1 -->
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="customerDropdown" class="form-label text-primary"><b>@SharedLocalizer["Customers"]</b></label>
+                        <select id="customerDropdown" name="CustomerId" class="form-select" required>
+                            <option value="" disabled selected>@SharedLocalizer["SelectCustomer"]</option>
+                            @foreach (var customer in ViewBag.Customers)
+                            {
+                                <option value="@customer.CustomerID">@customer.Code - @customer.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="distributorDropdown" class="form-label text-primary"><b>@SharedLocalizer["Distruputer"]</b></label>
+                        <select id="distributorDropdown" name="DistributorId" class="form-select" >
+                            <option value="" disabled selected>@SharedLocalizer["SelectDistributor"]</option>
+                            @foreach (var distributor in ViewBag.Distributors)
+                            {
+                                <option value="@distributor.DistributorID">@distributor.Code - @distributor.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="technicianDropdown" class="form-label text-primary"><b>@SharedLocalizer["Technicians"] </b></label>
+                        <select id="technicianDropdown" name="TechnicianId" class="form-select" required>
+                            <option value="" disabled selected>@SharedLocalizer["Technicians"]</option>
+                            @foreach (var technician in ViewBag.Technicians)
+                            {
+                                <option value="@technician.TechnicianID">@technician.Code - @technician.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="governorateDropdown" class="form-label text-primary"><b> @SharedLocalizer["SelectGovernate"] </b></label>
+                        <select id="governorateDropdown" name="GovernorateId" class="form-select" required>
+                            <option value="" disabled selected>@SharedLocalizer["SelectGovernate"]</option>
+                            @foreach (var governorate in ViewBag.Governorates)
+                            {
+                                <option value="@governorate.Id">@governorate.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="areaDropdown" class="form-label text-primary"><b>@SharedLocalizer["SelectArea"]</b></label>
+                        <select id="areaDropdown" name="AreaId" class="form-select" required>
+                            <option value="" disabled selected>@SharedLocalizer["SelectArea"]</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="couponReceiptNumber" class="form-label text-primary"><b>@SharedLocalizer["CouponReceiptNumber"] </b></label>
+                        <input type="number" id="couponReceiptNumber" name="CouponReceiptNumber" class="form-control" placeholder=@SharedLocalizer["CouponReceiptNumber"] required>
+                        <small id="couponError" class="text-danger d-none">Invalid or used coupon number.</small>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save"></i> @SharedLocalizer["submit"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Styles and Scripts -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        }
+
+    .btn-custom {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+        }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#governorateDropdown').change(function () {
+            debugger;
+            var governorateId = $(this).val();
+            $('#areaDropdown').empty().append('<option value="" disabled selected>Loading...</option>');
+            $('#loadingSpinner').show(); // Show spinner
+
+            if (governorateId) {
+                $.ajax({
+                    url: '/GetAreasByGovernorate/' + governorateId, // Correct URL
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log("API Response:", data); // Debugging: Log data to console
+
+                        $('#areaDropdown').empty().append('<option value="" disabled selected>Select Area</option>');
+                        $('#loadingSpinner').hide(); // Hide spinner
+
+                        if (data.length > 0) {
+                            $.each(data, function (index, area) {
+                                console.log("Area:", area); // Log individual area object for debugging
+                                $('#areaDropdown').append('<option value="' + area.id + '">' + area.name + '</option>');
+                            });
+                        } else {
+                            $('#areaDropdown').append('<option value="" disabled>No areas found</option>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", xhr.responseText); // Debugging: Log errors
+                        $('#loadingSpinner').hide(); // Hide spinner
+                        $('#areaDropdown').empty().append('<option value="" disabled>No areas found</option>');
+                    }
+                });
+            }
+        });
+    });
+
+    // Coupon validation
+    document.addEventListener("DOMContentLoaded", function () {
+        const couponReceiptNumber = document.getElementById("couponReceiptNumber");
+        const couponError = document.getElementById("couponError");
+
+        couponReceiptNumber.addEventListener("input", function () {
+            const enteredNumber = parseInt(this.value, 10);
+            const usedCoupons = []; // Define used coupon list dynamically if needed
+
+            if (isNaN(enteredNumber) || usedCoupons.includes(enteredNumber)) {
+                couponError.classList.remove("d-none");
+            } else {
+                couponError.classList.add("d-none");
+            }
+        });
+    });
+
+   
+</script>
+
+<!-- Loading Spinner (Initially hidden) -->
+<div id="loadingSpinner" class="spinner-border" style="display:none;"></div>

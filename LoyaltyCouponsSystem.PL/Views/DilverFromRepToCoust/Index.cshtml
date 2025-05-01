@@ -1,0 +1,305 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.DeliverFormRepToCoust
+@model DeliverFromRepToCoustVM
+
+@{
+    ViewData["Title"] = "Item Management";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+
+<br />
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b>@SharedLocalizer["Receipt"]</b></h1>
+        <p class="lead text-secondary">@SharedLocalizer["DeliverFromRepresentativeToCustomer"]</p>
+    </div>
+
+
+
+
+    <!-- Excel Upload Form -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <form asp-controller="DilverFromRepToCoust" asp-action="Index" enctype="multipart/form-data" method="post">
+                <label class="form-label text-primary"><b>@SharedLocalizer["UploadPicture"]</b></label>
+                <div class="input-group">
+                    <input type="file" name="image"  class="form-control" required />
+                    
+                </div>
+                <br><br>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="CustomerCodeOrName" class="form-label"><b>@SharedLocalizer["SelectCustomer"]</b></label>
+                        <select id="CustomerSelect" asp-for="SelectedCustomerCode" class="form-control select2" required>
+                            <option value="" disabled selected>@SharedLocalizer["SelectCustomer"]</option>
+                            @if (ViewBag.customer != null && ViewBag.customer.Count > 0)
+                            {
+                                @foreach (var customer in ViewBag.customer)
+                                {
+                                    <option value="@customer.CustomerID">@customer.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="ExchangePermission" class="form-label"><b> @SharedLocalizer["ExchangePermissionNumber"]</b></label>
+                        <input asp-for="ExchangePermission" name="ExchangePermission" class="form-control" placeholder=@SharedLocalizer["ExchangePermissionNumber"] required />
+
+                        <!-- Validation Message for ExchangePermission -->
+                        <span class="text-danger">
+                            @Html.ValidationMessageFor(model => model.ExchangePermission)
+                        </span>
+                          </div>
+
+                    @* <div class="col-md-6"> *@
+                    @*     <label for="TechnicianCodeOrName" class="form-label"><b>Select Technician</b></label> *@
+                    @*     <select asp-for="SelectedTechnicianCode"  class="form-control select2" required> *@
+                    @*         <option value="" disabled selected>Select Technician</option> *@
+                    @*         @foreach (var technician in ViewBag.Technicion) *@
+                    @*         { *@
+                    @*             <option value="@technician.Code">@technician.Name</option> *@
+                    @*         } *@
+                    @*     </select> *@
+                    @* </div> *@
+                </div>
+                <div class="row g-3 mt-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label text-primary"><b>@SharedLocalizer["SelectGovernate"]  <span class="text-danger">*</span></b></label>
+                        <select class="form-select" asp-for="GovernorateId" asp-items="@(new SelectList(Model.governorates,"Id","Name"))">
+                            <option disabled selected>@SharedLocalizer["SelectGovernate"]   </option>
+                        </select>
+
+                       
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <label for="areaDropdown" class="form-label"><b>@SharedLocalizer["SelectArea"]</b></label>
+                        <select class="form-select" asp-for="AreaId" asp-items="@(new SelectList(Model.Areas,"Id","Name"))" required>
+                            <option disabled selected>@SharedLocalizer["SelectArea"] </option>
+                        </select>
+
+
+                    </div>
+                </div>
+
+               
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-paper-plane"></i> @SharedLocalizer["Assign"]
+                    </button>
+                </div>
+
+
+            </form>
+        </div>
+
+        
+
+
+
+    </div>
+
+
+   @*  <div>
+        <label>Search by Name or Code:</label>
+        <input type="text" id="searchBox" placeholder="Search..." />
+    </div>
+
+    <div id="searchResults"></div> *@
+
+    
+      
+       
+        
+    
+</div>
+
+
+
+
+<br />
+<br />
+
+
+<!-- Include jQuery and Select2 CSS/JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#GovernorateId').change(function () {
+            let governorateId = $(this).val(); // الحصول على قيمة المحافظة
+            let areaList = $('#AreaId'); // قائمة المناطق
+            areaList.empty().append('<option  value="" disabled selected >Select Area</option>'); // إعادة تعيين القائمة
+
+            if (governorateId) {
+                $.ajax({
+                    url: '/GenerateQRCode/GetAreas',
+                    type: 'GET',
+                    data: { GovernorateId: governorateId }, // إرسال ID كمُعطى في الطلب
+                    beforeSend: function () {
+                        areaList.append('<option disabled>جارِ التحميل...</option>'); // إظهار مؤشر التحميل
+                    },
+                    success: function (areas) {
+                        areaList.find('option:disabled').remove(); // إزالة مؤشر التحميل
+                        if (areas.length > 0) {
+                            $.each(areas, function (i, area) {
+                                areaList.append($('<option></option>').attr('value', area.id).text(area.name));
+                            });
+                        } else {
+                            areaList.append('<option disabled>لا توجد مناطق متاحة</option>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('خطأ في جلب المناطق:', error);
+                        alert('حدث خطأ أثناء تحميل المناطق. الرجاء المحاولة لاحقًا.');
+                    },
+                    complete: function () {
+                        // يمكن إضافة أي أكواد أخرى بعد انتهاء الطلب
+                    }
+                });
+            }
+        });
+
+        $('#CustomerSelect').select2({
+            placeholder: "Search for a customer...",
+            allowClear: true, // لإمكانية إلغاء التحديد
+            width: '100%' // لجعل التصميم متناسقًا
+        });
+    });
+</script>
+
+
+
+<style>
+    .form-label {
+        color: #007bff !important;
+        font-weight: bold;
+    }
+
+    .form-control, .form-select {
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 10px rgba(0, 86, 179, 0.3);
+        }
+
+
+    label {
+        font-weight: bold;
+    }
+
+
+    .btn-outline-secondary {
+        border-radius: 30px;
+        border: 2px solid #007bff;
+        color: #007bff;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 8px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-danger {
+        border-radius: 20px;
+    }
+
+    .couponFields {
+        border-bottom: 1px dashed #e0e0e0;
+        padding-bottom: 15px;
+        margin-bottom: 10px;
+    }
+
+    .container h1 {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .is-invalid {
+        border-color: #dc3545; /* Red border */
+        box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); /* Optional red shadow */
+    }
+
+    .text-danger {
+        font-size: 0.875em; /* Adjust font size if needed */
+        margin-top: 5px;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px; /* Adjust height to match `form-select` */
+        border-radius: 8px;
+        border: 1px solid #ced4da; /* Match other field borders */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 38px;
+        color: #495057;
+        padding-left: 8px; /* Align with other fields */
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
+    }
+
+    hr {
+        border-top: 2px solid #808080;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sequence-error {
+        margin-top: 5px;
+        font-size: 0.875em;
+        color: #dc3545;
+        position: relative;
+    }
+
+</style>

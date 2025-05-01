@@ -1,0 +1,94 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.Account
+@model LoginViewModel;
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center" style="background: linear-gradient(135deg, #1b6ec2, #87ceeb);">
+    <div class="card shadow border-0" style="max-width: 600px; width: 100%; background-color: rgba(255, 255, 255, 0.95); border-radius: 15px;">
+        <div class="card-body p-4">
+            <h2 class="text-center mb-4" style="color: #1b6ec2; font-weight: 700;">Login</h2>
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12 mb-3 position-relative">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input asp-for="Password" class="form-control" type="password" id="passwordField" />
+                            <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                                <i class="fa-solid fa-eye"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                     <div class="col-md-12 mb-3"> 
+                         <div class="form-check"> 
+                             <input asp-for="RememberMe" class="form-check-input" /> 
+                             <label asp-for="RememberMe" class="form-check-label">Remember me?</label> 
+                         </div> 
+                     </div> 
+                </div>
+
+                <input type="submit" value="Login" class="btn btn-primary btn-login w-100 py-2 mt-3" />
+
+                @* Hide forget password ....
+
+                <div class="text-center mt-4">
+                    <a asp-controller="Account" asp-action="VerifyEmail" class="text-decoration-none" style="color: #1b6ec2; font-weight: bold;">Forgot password?</a>
+                </div>
+
+                    *@
+
+                <div class="text-center mt-4">
+                    <p style="font-size: 0.9rem; font-weight: 600; color: #333;">
+                        Don't have an account?
+                        <a asp-controller="Account" asp-action="Register" class="text-decoration-none"
+                           style="color: #1b6ec2; font-weight: bold; transition: color 0.3s;">
+                            Register
+                        </a>
+                    </p>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mt-2"
+                       style="font-size: 0.85rem; font-weight: 600; border-radius: 30px; padding: 8px 20px;">
+                        Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial.cshtml")
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordField = document.getElementById("passwordField");
+        const togglePassword = document.getElementById("togglePassword");
+        const toggleIcon = togglePassword.querySelector("i");
+
+        togglePassword.addEventListener("click", function () {
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        });
+    });
+</script>

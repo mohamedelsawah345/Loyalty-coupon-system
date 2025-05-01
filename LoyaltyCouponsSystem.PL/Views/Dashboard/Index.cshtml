@@ -1,0 +1,256 @@
+﻿@{
+    ViewData["Title"] = "QR Code Generator";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<div class="container">
+    <div class="page-inner">
+        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+            <div class="text-center w-100">
+                <h3 class="dashboard-title">@SharedLocalizer["Dashboard"]</h3>
+            </div>
+        </div>
+
+        <!-- Updated Row of Cards -->
+        <div class="row g-4">
+            <div class="col-sm-6 col-md-4">
+                <div class="card card-stats shadow-lg border-0 rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container rounded-circle bg-gradient-primary text-white p-4">
+                            <i class="fas fa-user-check fa-2x"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="card-category text-muted"> @SharedLocalizer["Users"]</h6>
+                            <h4 class="card-title">@ViewBag.Employes</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4">
+                <div class="card card-stats shadow-lg border-0 rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container rounded-circle bg-gradient-info text-white p-4">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="card-category text-muted">@SharedLocalizer["Employees"]</h6>
+                            <h4 class="card-title">@ViewBag.Vistores</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4">
+                <div class="card card-stats shadow-lg border-0 rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container rounded-circle bg-gradient-success text-white p-4">
+                            <i class="fas fa-luggage-cart fa-2x"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="card-category text-muted">@SharedLocalizer["TotalExchangePermissions"]</h6>
+                            <h4 class="card-title">@ViewBag.Order</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loop through coupon types -->
+        <div class="row g-4">
+            @foreach (var type in ViewBag.CouponCounts.Keys)
+            {
+                <div class="col-md-4">
+                    <div class="card card-primary shadow-lg border-0 rounded-4">
+                        <div class="card-header bg-gradient-dark text-white">
+                            <div class="card-head-row">
+                                <div class="card-title">@type</div>
+                            </div>
+                        </div>
+                        <div class="card-body pb-0">
+                            <div class="mb-4 mt-2">
+                                @{
+                                    var values = new List<int>(ViewBag.CouponCounts[type].Values);
+                                    var total = values.Sum();
+                                }
+                                <h3 class="text-primary">@SharedLocalizer["Total"]: @total</h3>
+
+                                <!-- Display Statuses in Styled Rows -->
+                                <div class="status-row d-flex justify-content-between">
+                                    <div class="status-item">
+                                        <h5 class="status-title"> @SharedLocalizer["Created"]</h5>
+                                        <p class="status-value">
+                                            @(
+                                                ViewBag.CouponCounts[type].ContainsKey("Created") ?
+                                                ViewBag.CouponCounts[type]["Created"] : 0
+                                                )
+                                        </p>
+                                    </div>
+                                    <div class="status-item">
+                                        <h5 class="status-title">@SharedLocalizer["Pending"]</h5>
+                                        <p class="status-value">
+                                            @(
+                                                ViewBag.CouponCounts[type].ContainsKey("Pending") ?
+                                                ViewBag.CouponCounts[type]["Pending"] : 0
+                                                )
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="status-row d-flex justify-content-between">
+                                    <div class="status-item">
+                                        <h5 class="status-title">@SharedLocalizer["Preapproved"]</h5>
+                                        <p class="status-value">
+                                            @(
+                                                ViewBag.CouponCounts[type].ContainsKey("Preapproved") ?
+                                                ViewBag.CouponCounts[type]["Preapproved"] : 0
+                                                )
+                                        </p>
+                                    </div>
+                                    <div class="status-item">
+                                        <h5 class="status-title">@SharedLocalizer["Approved"]</h5>
+                                        <p class="status-value">
+                                            @(
+                                                ViewBag.CouponCounts[type].ContainsKey("Approved") ?
+                                                ViewBag.CouponCounts[type]["Approved"] : 0
+                                                )
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Additional Styles -->
+<style>
+    /* Updated container styles for better spacing */
+    .container {
+        padding-top: 0px !important;
+        padding-bottom: 0px !important; /* Add bottom spacing */
+    }
+
+    /* Make the page content start higher */
+    .page-inner {
+        padding-top: 0px !important;
+    }
+
+    .dashboard-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #0060af;
+        margin-bottom: 20px;
+        text-align: center; /* توسيط النص */
+        width: 100%; /* التأكد من أنه يمتد على العرض بالكامل */
+    }
+
+
+    /* Add smooth shadow and scaling effect on hover */
+    .card-stats, .card-primary {
+        transition: all 0.3s ease-in-out;
+        border-radius: 12px; /* More rounded corners */
+        overflow: hidden; /* Prevent overflow */
+    }
+
+        .card-stats:hover, .card-primary:hover {
+            transform: translateY(-8px);
+            box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+    /* Make the card header more stylish */
+    .card-header {
+        background: linear-gradient(135deg, #2c3e50, #4b6584);
+        border-radius: 12px 12px 0 0;
+        padding: 15px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Card body background update */
+    .card-body {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .icon-container {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    
+
+    /* Enhanced gradients */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #3498db, #8e44ad);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #1abc9c, #16a085);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    /* Improve Status Rows */
+    .status-row {
+        margin-bottom: 15px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+    }
+
+    /* Styling Status Items */
+    .status-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    .status-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .status-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #007bff;
+    }
+
+    /* Add subtle hover effect to status items */
+    .status-item:hover {
+        background: rgba(0, 0, 0, 0.07);
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    /* Center the card title within the card header */
+    .card-header .card-title {
+        text-align: center;
+        width: 100%; /* Ensure it takes full width */
+    }
+
+    /* Center the "Total: 0" text within each card */
+    .card-body h3.text-primary {
+        text-align: center;
+        width: 100%;
+        font-weight: bold;
+    }
+
+
+</style>
+
+
+    

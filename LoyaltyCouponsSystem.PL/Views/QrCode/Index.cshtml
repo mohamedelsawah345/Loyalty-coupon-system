@@ -1,0 +1,147 @@
+﻿﻿@{
+    ViewData["Title"] = "QR Code Scanner";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<h2>@SharedLocalizer["QRCodeScanner"]</h2>
+
+<!-- QR Code Scanner Container -->
+<div id="qr-reader" style="width: 500px; margin: auto;"></div>
+
+<!-- ButtonToContinueScan -->
+<!-- Hidden input to store the receipt number -->
+<input type="hidden" id="receiptNumber" value="@ViewBag.ReceiptNumber" />
+
+@* <div>
+    <!-- Button with Dynamic Redirect -->
+    <button type="button" class="btn btn-info" onclick="redirectToScan()">
+        Click Here To Continue Scan
+    </button>
+</div> *@
+
+<br />
+<div>
+    <button type="button" class="btn btn-info" onclick="location.href='@Url.Action("AllTransactions", "ReceiveFromCustomer")'">
+        @SharedLocalizer["FinishScanning"]
+    </button>
+
+</div>
+
+<div>
+    @SharedLocalizer["NumberofCouponsScanned"] : <span id="coupon-counter">@ViewBag.Counter</span>
+    <br />
+    <br />
+    @SharedLocalizer["ReceiptNumber"]: @ViewBag.ReceiptNumber
+</div>
+
+
+
+
+<!-- Display Scan Result -->
+<div id="qr-reader-results" style="margin-top: 20px; font-size: 1.2em;"></div>
+
+
+<!-- Display Saved QR Codes -->
+<h3>@SharedLocalizer["Scannedresultswillappearhere"]</h3>
+<ul id="saved-qr-codes">
+    @foreach (var qrCode in ViewBag.ScannedQrCodes)
+    {
+        <li>@qrCode</li>
+    }
+</ul>
+
+<!-- Include the html5-qrcode library -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<!-- Include the jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+           // Function to handle successful QR code scans
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`Scan result: ${decodedText}`, decodedResult);
+
+        // Display the scanned result
+        document.getElementById('qr-reader-results').innerText = `Scan Result: ${decodedText}`;
+
+        // Get the receipt number (ensure this value is dynamically set, e.g., from a hidden input)
+        const receiptNumber = document.getElementById('receiptNumber').value; // Assuming the receipt number is available
+
+        // Send the scanned result and receipt number to the server to save it
+        fetch('/QrCode/SaveData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                qrCodeData: decodedText,
+                receiptNumber: receiptNumber  // Include the receipt number
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+            console.log('QR code data saved successfully.');
+
+            // إضافة الكود الجديد للقائمة بدون إعادة تحميل الصفحة
+            const savedQrCodesList = document.getElementById('saved-qr-codes');
+            const newQrCodeItem = document.createElement('li');
+            newQrCodeItem.innerText = decodedText;
+            savedQrCodesList.appendChild(newQrCodeItem);
+
+            // تحديث عداد الكوبونات الممسوحة
+            const counterElement = document.querySelector('#coupon-counter'); // تأكد من إضافة id للعداد في الواجهة
+            if (counterElement) {
+                const currentCount = parseInt(counterElement.innerText) || 0;
+                counterElement.innerText = currentCount + 1;
+            }
+
+            // مسح نتيجة المسح بعد الحفظ الناجح
+            document.getElementById('qr-reader-results').innerText = '';
+
+            // إعادة تشغيل الماسح لمسح الكود التالي
+            html5QrcodeScanner.clear().then(() => {
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            });
+
+        } else {
+            console.error('Failed to save QR code data.');
+        }
+    });
+
+
+        // Optionally, stop the scanner after a successful scan
+        //html5QrcodeScanner.clear();
+    }
+
+    // Function to handle scan failures
+    function onScanFailure(error) {
+        console.warn(`QR code scan error: ${error}`);
+    }
+
+    // Initialize the scanner
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-reader", // Container ID
+        { fps: 10, qrbox: 250 }, // Scanner configuration
+        false // Verbose mode
+    );
+
+
+
+    // Start the scanner
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+
+    function redirectToScan() {
+        // Get the receipt number from the hidden input
+        var receiptNumber = document.getElementById("receiptNumber").value;
+
+        // Redirect to the Index action with the receipt number as a parameter
+        if (receiptNumber) {
+            window.location.href = '@Url.Action("Index", "QrCode")' + '?receiptNumber=' + encodeURIComponent(receiptNumber);
+        } else {
+            alert("Receipt number is missing.");
+        }
+    }
+
+</script>

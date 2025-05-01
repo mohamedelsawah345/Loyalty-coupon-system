@@ -1,0 +1,32 @@
+﻿@using LoyaltyCouponsSystem.DAL.Entity
+@model IEnumerable<QRScanLog>
+
+@{
+    
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<h2>QR Code Scan Statistics</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>QR Code</th>
+            <th>Scan Time</th>
+            <th>Order Of Scans </th>
+            <th>User IP</th>
+            <th>User Agent</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.QR_ID</td>
+                <td>@log.ScanTime</td>
+                @* <td>@log.NumberOfScans </td> *@
+               @*  <td>@log.UserIP</td>
+                <td>@log.UserAgent</td> *@
+            </tr>
+        }
+    </tbody>
+</table>

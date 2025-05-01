@@ -1,0 +1,49 @@
+﻿@model IEnumerable<LoyaltyCouponsSystem.BLL.ViewModel.Admin.AdminUserViewModel>
+
+@{
+    ViewData["Title"] = "Assign Role to User";
+    Layout = "~/Views/Shared/AdminDashBoard_Layout1.cshtml";
+}
+
+<h1>Assign Role to User</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Current Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Role</td>
+                <td>
+                    <!-- Role Assignment Form -->
+                    <form asp-action="AssignRole" asp-controller="Admin" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <select name="roleName" class="form-select form-select-sm" style="width:auto; display:inline;">
+                            @foreach (var role in ViewData["AllRoles"] as List<string>)
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        </select>
+                        <button class="btn btn-success btn-sm">Assign Role</button>
+                    </form>
+
+                    @if (!(user.EmailConfirmed ?? false))  
+                    {
+                        <form asp-action="ConfirmAccount" asp-controller="Admin" method="post" style="display:inline;">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <button class="btn btn-warning btn-sm">Confirm Account</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

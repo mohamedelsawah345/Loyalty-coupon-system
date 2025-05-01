@@ -1,0 +1,288 @@
+﻿@using LoyaltyCouponsSystem.BLL.ViewModel.Technician
+@model TechnicianViewModel
+
+@{
+    ViewData["Title"] = "Add Technician";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+    var simplifiedCustomers = Model.Customers.Select(c => new
+    {
+        Code = c.Value,
+        Name = c.Text
+    }).ToList();
+    var simplifiedUser = Model.Users.Select(c => new
+    {
+        Code = c.Value,
+        Name = c.Text
+    }).ToList();
+}
+
+<div class="container mt-5">
+    <!-- Backward Button -->
+    <div class="mb-4">
+        <a href="@Url.Action("GetAllTechnicians", "Technician")" class="btn btn-outline-primary" style="border-radius: 30px;">
+            <i class="fas fa-arrow-left"></i> @SharedLocalizer["Back"]
+        </a>
+    </div>
+
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b> @SharedLocalizer["AddTechnician"]</b></h1>
+        <p class="lead text-secondary">@SharedLocalizer["Register new technicians with ease and flexibility"]</p>
+    </div>
+
+    <!-- Excel Upload Form -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <form asp-controller="Technician" asp-action="UploadExcel" enctype="multipart/form-data" method="post">
+                <label class="form-label text-primary"><b>@SharedLocalizer["UploadExcelFiletoAuto_fillCustomerData"]</b></label>
+                <div class="input-group">
+                    <input type="file" name="file" accept=".xlsx, .xls" class="form-control" required />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> @SharedLocalizer["UploadExcel"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form asp-action="AddTechnician" method="post" id="technicianForm">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Code and Name -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Code" class="form-label text-primary"><b>@SharedLocalizer["Code"]<span class="text-danger">*</span></b></label>
+                        <input asp-for="Code" class="form-control" placeholder=@SharedLocalizer["Code"] required />
+                        @*<span asp-validation-for="Code" class="text-danger"></span>*@
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label text-primary"><b>@SharedLocalizer["Name"] <span class="text-danger">*</span></b></label>
+                        <input asp-for="Name" class="form-control" placeholder=@SharedLocalizer["Name"] required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Additional Fields -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NickName" class="form-label text-primary"><b>@SharedLocalizer["NickName"]</b></label>
+                        <input asp-for="NickName" class="form-control" placeholder=@SharedLocalizer["NickName"] />
+                        <span asp-validation-for="NickName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NationalID" class="form-label text-primary"><b> @SharedLocalizer["NationalID"] <span class="text-danger">*</span></b></label>
+                        <input asp-for="NationalID" class="form-control" type="text" placeholder=@SharedLocalizer["NationalID"] required />
+                        <span asp-validation-for="NationalID" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Phone Numbers -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber1" class="form-label text-primary"><b> @SharedLocalizer["PhoneNumber1"] <span class="text-danger">*</span></b></label>
+                        <input asp-for="PhoneNumber1" class="form-control" placeholder=@SharedLocalizer["PhoneNumber1"] required />
+                        <span asp-validation-for="PhoneNumber1" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber2" class="form-label text-primary"><b>@SharedLocalizer["PhoneNumber2"]</b></label>
+                        <input asp-for="PhoneNumber2" class="form-control" placeholder=@SharedLocalizer["PhoneNumber2"] />
+                        <span asp-validation-for="PhoneNumber2" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber3" class="form-label text-primary"><b>@SharedLocalizer["PhoneNumber3"]</b></label>
+                        <input asp-for="PhoneNumber3" class="form-control" placeholder=@SharedLocalizer["PhoneNumber3"] />
+                        <span asp-validation-for="PhoneNumber3" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Governate and City -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="Governate" class="form-label text-primary"><b> @SharedLocalizer["Governorate"] <span class="text-danger">*</span></b></label>
+                        <select asp-for="SelectedGovernate" class="form-select" id="Governate" required>
+                            <option value="">@SharedLocalizer["SelectGovernate"]</option>
+                            @foreach (var governate in Model.Governates)
+                            {
+                                <option value="@governate.Value">@governate.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="City" class="form-label text-primary"><b>@SharedLocalizer["Area"] <span class="text-danger">*</span></b></label>
+                        <select asp-for="SelectedCity" class="form-select" id="City" required>
+                            <option value="">@SharedLocalizer["SelectArea"]</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Customers and Representatives -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SelectedCustomerId" class="form-label text-primary"><b>@SharedLocalizer["SelectCustomers"]</b></label>
+                        <select asp-for="SelectedCustomerId" asp-items="Model.Customers" class="form-control select2" multiple>
+                            <option></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SelectedUserCodes" class="form-label text-primary"><b> @SharedLocalizer["SelectRepresentatives"]</b></label>
+                        <select asp-for="SelectedUserCodes" asp-items="Model.Users" class="form-control select2" multiple>
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save"></i> @SharedLocalizer["RegisterTechnician"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Search and Select Customers", // Placeholder for search
+                allowClear: true, // Allow clearing selections
+                width: '100%' // Adjust the dropdown to fit container width
+            });
+        });
+                    const citiesByGovernate = {
+            Aswan: ["Aswan", "Draou", "Kom Ombo", "Edfu", "Nasser El-Nuba", "Abu Simbel", "Kalabsha", "El-Sebaaia"],
+            Assiut: ["Assiut", "Dairout", "Manfalout", "Qusiya", "Abnoub", "Abu Teeg", "El-Ghanaim", "Sahil Selim", "Al-Badari", "Seda"],
+            Alexandria: ["Alexandria", "Borg El Arab", "Al Amiriya", "Sidi Bishr", "Smouha", "El-Montazah", "Stanley", "Miami", "Gleem", "Abu Qir", "Mandara", "El-Max", "Raml Station"],
+            Ismailia: ["Ismailia", "Fayed", "Qantara Sharq", "Qantara Gharb", "Tel El-Kebir", "Abu Suweir", "Al-Qassasin"],
+            Luxor: ["Luxor", "Esna", "Armant", "El-Zinia", "El-Bayadiya", "El-Qurna", "El-Tod"],
+            "Red Sea": ["Hurghada", "Ras Ghareb", "Safaga", "El-Quseir", "Marsa Alam", "Shalatin", "Halayeb"],
+            Beheira: ["Damanhour", "Kafr El-Dawar", "Rashid", "Edko", "Abu Hamsa", "El-Dalangat", "Mahmoudiya", "Itay El-Baroud", "Housh Eissa", "Shobrahet", "Kom Hamada", "Badr", "Wadi El-Natrun", "New Nubaria"],
+            Giza: ["Giza", "Abu Al-Nemros", "October City", "Sheikh Zayed", "Faisal", "Haram", "Badrashin", "Al-Ayat", "El-Saff", "Atfih", "Wahaat El-Bahareya", "Kirdasa", "Maneshet El-Qanater"],
+            Dakahlia: ["Mansoura", "Tala", "Mitta Ghamr", "Dekernes", "Aja", "Menya El-Nasser", "El-Senbelawein", "Beni Obaid", "El-Manzala", "Tami El-Omdeed", "El-Matariya", "Balqas", "Meet Salsil", "El-Khordy"],
+            Suez: ["Suez", "Ain Sokhna", "El-Adabiya"],
+            Sharqia: ["Zagazig", "Menia El-Qamh", "Belbes", "Mashtool El-Souk", "Abu Hammad", "El-Qanayat", "Hehia", "El-Ibrahimia", "Deirab Najm", "Kafr Saker", "Olad Saker", "Fakous", "El-Salihiya El-Gedida", "Husseiniya", "El-Ashter"],
+            Gharbia: ["Tanta", "El-Mahalla El-Kubra", "Kafr El-Zayat", "Zefta", "El-Santa", "Khatour", "Basyoun", "Samannoud"],
+            Cairo: ["Cairo", "Helwan", "Maadi", "Shorouk", "Nasr City", "Fifth Settlement", "Heliopolis", "Zamalek", "Ain Shams", "Sayeda Zainab", "Mousky", "Mohandiseen", "Dokki"],
+            Qalyubia: ["Benha", "Tukh", "Qalyoub", "El-Qanater El-Khairia", "Shubra El-Kheima", "El-Khanka", "Kafr Shokr", "El-Obour"],
+            "New Valley": ["Kharga", "Dakhla", "Farafra", "Paris", "Balat"],
+            Matrouh: ["Marsa Matrouh", "El-Alamein", "Sidi Abdel Rahman", "El-Hamra"],
+            Minya: ["Minya", "Mallawi", "Beni Mazar", "Samalut", "El-Edwa", "Deir Mawas", "El-Qusiya", "El-Minya"],
+            Fayoum: ["Fayoum", "Etsa", "Ibshway", "Tamiya", "Youssef El-Seddik", "Sinuris", "Shakshouk"],
+            "Beni Suef": ["Beni Suef", "El-Fashn", "Nasser", "El-Wasta", "Ibsheway", "Sumosta", "Banha"],
+            "Kafr El Sheikh": ["Kafr El-Sheikh", "Desouq", "Qulubia", "Riyad", "Beyala", "Fuwah", "Haji", "Kafr El-Batikh"],
+            "Port Said": ["El-Gamil", "El-Manakh", "Abu Talat"],
+            Damietta: ["Ras El-Bar", "Ezbet El-Borg", "Kafr Saad"],
+            Menoufia: ["Shibin El-Kom", "Menouf", "Ashmoun", "Tala", "Berket El-Saba", "Sadat City", "Sers El-Lyan"],
+            Qena: ["Qena", "Deshna", "Nag Hammadi", "Qous"],
+            Sohag: ["Sohag", "Tahta", "El-Balyana", "Akhmim", "Girga", "Dar El-Salam"],
+            "South Sinai": ["Sharm El-Sheikh", "Dahab", "Nuweiba", "Taba", "Tor Sinai"],
+            "North Sinai": ["Arish", "Sheikh Zuweid", "Rafah", "Nakhl", "Bir El-Abd"]
+        };
+
+
+        document.getElementById("Governate").addEventListener("change", function () {
+            const governate = this.value;
+            const citySelect = document.getElementById("City");
+
+            citySelect.innerHTML = '<option value="" disabled selected>Choose a City</option>';
+
+            if (governate && citiesByGovernate[governate]) {
+                citySelect.disabled = false;
+                citiesByGovernate[governate].forEach(city => {
+                    const option = document.createElement("option");
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            } else {
+                citySelect.disabled = true;
+            }
+        });
+    </script>
+ <!-- Include Select2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+}
+<style>
+
+    .btn-outline-primary {
+        font-size: 14px;
+        padding: 8px 20px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        border: 2px solid #007bff;
+        color: #007bff;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .btn-outline-primary i {
+            margin-right: 5px;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .form-control, .form-select {
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        }
+
+    label {
+        font-weight: bold;
+    }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+</style>

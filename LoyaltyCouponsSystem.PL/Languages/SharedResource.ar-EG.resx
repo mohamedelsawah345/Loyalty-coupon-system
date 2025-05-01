@@ -1,0 +1,570 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Home" xml:space="preserve">
+    <value>الرئسية</value>
+  </data>
+  <data name="QRCode" xml:space="preserve">
+    <value>الكوبون</value>
+  </data>
+  <data name="GenerateQR" xml:space="preserve">
+    <value>انشاء كوبون</value>
+  </data>
+  <data name="TransactionGeneratedQRs" xml:space="preserve">
+    <value>معاملات الكوبون التي تم انشاؤها</value>
+  </data>
+  <data name="ApproveScan" xml:space="preserve">
+    <value>موافقه المسح</value>
+  </data>
+  <data name="ExchangePermission" xml:space="preserve">
+    <value>اذن الصرف</value>
+  </data>
+  <data name="MerchantReceipt" xml:space="preserve">
+    <value>ايصال التاجر من المندوب</value>
+  </data>
+  <data name="ReceiveFromCustomer" xml:space="preserve">
+    <value>استلام من فني</value>
+  </data>
+  <data name="ManageEmployees" xml:space="preserve">
+    <value>ادارة العملاء</value>
+  </data>
+  <data name="ManageUsers" xml:space="preserve">
+    <value>ادارة المستخدمين</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>تم رفض الوصول</value>
+  </data>
+  <data name="AccessDeniedMessage" xml:space="preserve">
+    <value>ليس لديك إذن للوصول إلى هذه الصفحة</value>
+  </data>
+  <data name="WelcomePage" xml:space="preserve">
+    <value>صفحه الترحيب</value>
+  </data>
+  <data name="Heading (h2)" xml:space="preserve">
+    <value>مرحباً بكم في نظام الكوبونات!</value>
+  </data>
+  <data name="Paragraph (p)" xml:space="preserve">
+    <value>نحن متحمسون لوجودك هنا. استكشف أحدث الكوبونات والعروض والمزيد.</value>
+  </data>
+  <data name="GEP" xml:space="preserve">
+    <value>انشاء اذن صرف</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>عربي</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="TEP" xml:space="preserve">
+    <value>معاملات اذن الصرف</value>
+  </data>
+  <data name="DeliverFromRepresentativeToCustomer" xml:space="preserve">
+    <value>إيصال استلام التاجر من المندوب</value>
+  </data>
+  <data name="AllTransactions" xml:space="preserve">
+    <value>المعاملات</value>
+  </data>
+  <data name="ReturnItems" xml:space="preserve">
+    <value>ايصال استلام من التاجر</value>
+  </data>
+  <data name="ManageMerchant" xml:space="preserve">
+    <value>ادارة التجار</value>
+  </data>
+  <data name="ManageDistributor" xml:space="preserve">
+    <value>ادارة الموزعين</value>
+  </data>
+  <data name="ManageTechnician" xml:space="preserve">
+    <value>ادارة الفنيين</value>
+  </data>
+  <data name="ManageUsers " xml:space="preserve">
+    <value>ادارة المستخدمين</value>
+  </data>
+  <data name="RecieptRecive" xml:space="preserve">
+    <value>ايصال الاستلام</value>
+  </data>
+  <data name="RecieptReceiveFromCustomer" xml:space="preserve">
+    <value>ايصال استلام من تاجر</value>
+  </data>
+  <data name="GQR" xml:space="preserve">
+    <value>انشاء باركود</value>
+  </data>
+  <data name="SeclectTypeOfCoupon" xml:space="preserve">
+    <value>اختر نوع الكوبون</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>القيمة</value>
+  </data>
+  <data name="SelectGovernate" xml:space="preserve">
+    <value>اختر المحافظه</value>
+  </data>
+  <data name="SelectArea" xml:space="preserve">
+    <value>اختر المنطقه</value>
+  </data>
+  <data name="SelectNumber" xml:space="preserve">
+    <value>اختر العدد</value>
+  </data>
+  <data name="sequence" xml:space="preserve">
+    <value>الرقم التسلسلي</value>
+  </data>
+  <data name="GQRS" xml:space="preserve">
+    <value>إنشاء الكوبونات</value>
+  </data>
+  <data name="SelectDistributor" xml:space="preserve">
+    <value>اختر موزع</value>
+  </data>
+  <data name="SelectCustomer" xml:space="preserve">
+    <value>اختر تاجر</value>
+  </data>
+  <data name="ExchangePermissionNumber" xml:space="preserve">
+    <value>رقم اذن الصرف</value>
+  </data>
+  <data name="StartSequence" xml:space="preserve">
+    <value>بدايه الرقم التسلسي</value>
+  </data>
+  <data name="EndSequence" xml:space="preserve">
+    <value>نهايه الرقم التسلسلي</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="AddAnother" xml:space="preserve">
+    <value>اضافة اخر</value>
+  </data>
+  <data name="Assign" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="AQRW" xml:space="preserve">
+    <value>تعيين رموز باركود باستخدام واجهة مبسطة وحديثة</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>نوع الفرز</value>
+  </data>
+  <data name="CouponType" xml:space="preserve">
+    <value>نوع الكوبون</value>
+  </data>
+  <data name="Receipt" xml:space="preserve">
+    <value>ايصال الاستلام</value>
+  </data>
+  <data name="UploadPicture" xml:space="preserve">
+    <value>تحميل صوره</value>
+  </data>
+  <data name="EAS" xml:space="preserve">
+    <value>إدارة العناصر المستلمة بسهولة من خلال واجهة واضحة وحديثة</value>
+  </data>
+  <data name="Technicians" xml:space="preserve">
+    <value>الفني</value>
+  </data>
+  <data name="Employees" xml:space="preserve">
+    <value>العملاء</value>
+  </data>
+  <data name="Distruputer" xml:space="preserve">
+    <value>الموزع - اختياري</value>
+  </data>
+  <data name="submit" xml:space="preserve">
+    <value>ارسال</value>
+  </data>
+  <data name="CouponReceiptNumber" xml:space="preserve">
+    <value>رقم اذن الاستلام</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>المستخدمين</value>
+  </data>
+  <data name="TotalExchangePermissions" xml:space="preserve">
+    <value>اذونات الصرف الكليه</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>الكلي</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>تم انشاء</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>تم اذن صرف</value>
+  </data>
+  <data name="Preapproved" xml:space="preserve">
+    <value>ما قبل الموافقه</value>
+  </data>
+  <data name="Approved" xml:space="preserve">
+    <value>تمت الموافقه</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>الرقم التسلسلي</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>فرز</value>
+  </data>
+  <data name="TypeOfCoupone" xml:space="preserve">
+    <value>نوع الكوبون</value>
+  </data>
+  <data name="CreationDateTime" xml:space="preserve">
+    <value>وقت الانشاء</value>
+  </data>
+  <data name="NumberOfCoupones" xml:space="preserve">
+    <value>عدد الكوبونات</value>
+  </data>
+  <data name="GeneratedBy" xml:space="preserve">
+    <value>تم الانشاء بواسطه من</value>
+  </data>
+  <data name="Governorate" xml:space="preserve">
+    <value>المحافظه</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>المنطقه</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>تفاصيل</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>طباعه</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحاله</value>
+  </data>
+  <data name="OrderInYear" xml:space="preserve">
+    <value>الترتيب في السنه</value>
+  </data>
+  <data name="Represintitive" xml:space="preserve">
+    <value>المندوب</value>
+  </data>
+  <data name="ReceiveCustomer" xml:space="preserve">
+    <value>التاجر الذي استلم</value>
+  </data>
+  <data name="DeliverCustomer" xml:space="preserve">
+    <value>التاجر الذي سلم</value>
+  </data>
+  <data name="ApprovedBy" xml:space="preserve">
+    <value>تمت الموافقه بواسطه</value>
+  </data>
+  <data name="CouponHistory" xml:space="preserve">
+    <value>كل الكوبونات</value>
+  </data>
+  <data name="QRCodeScanner" xml:space="preserve">
+    <value>الماسح الضوئي</value>
+  </data>
+  <data name="ContinueScanning" xml:space="preserve">
+    <value>استمرار المسح</value>
+  </data>
+  <data name="FinishScanning" xml:space="preserve">
+    <value>انهاء المسح</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>التاجر</value>
+  </data>
+  <data name="Distributor" xml:space="preserve">
+    <value>الموزع</value>
+  </data>
+  <data name="NumberofCouponsScanned" xml:space="preserve">
+    <value>عدد الكوبونات التم تم عمل مسح لها</value>
+  </data>
+  <data name="Scannedresultswillappearhere" xml:space="preserve">
+    <value>تفاصيل الكوبونات سوف تظهر هنا</value>
+  </data>
+  <data name="Transaction Of QRs Recipt" xml:space="preserve">
+    <value>معاملات وصولات الاستلام</value>
+  </data>
+  <data name="CustomerCode" xml:space="preserve">
+    <value>كود التاجر</value>
+  </data>
+  <data name="PictureofReciept" xml:space="preserve">
+    <value>صوره الوصل</value>
+  </data>
+  <data name="AllTransactionsReciveRecipt" xml:space="preserve">
+    <value>كل معاملات استلام الوصل</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="ScanQR" xml:space="preserve">
+    <value>مسح الكوبون</value>
+  </data>
+  <data name="AllCustomers" xml:space="preserve">
+    <value>التجار</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>تم الانشاء بواسطه </value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>تم التحديث بواسطه </value>
+  </data>
+  <data name="UpdatedAt" xml:space="preserve">
+    <value>وقت التحديث</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>فعل</value>
+  </data>
+  <data name="AddNewCustomer" xml:space="preserve">
+    <value>اضافة تاجر جديد</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>الكود</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>وقف</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="AddNewDistributor" xml:space="preserve">
+    <value>اضافة موزع جديد</value>
+  </data>
+  <data name="AllDistributors" xml:space="preserve">
+    <value>الموزعين</value>
+  </data>
+  <data name="AllTechnicians" xml:space="preserve">
+    <value>الفنيين</value>
+  </data>
+  <data name="AddNewTechnician" xml:space="preserve">
+    <value>اضافة فني جديد</value>
+  </data>
+  <data name="NationalID" xml:space="preserve">
+    <value>الرقم القومي</value>
+  </data>
+  <data name="PhoneNumber1" xml:space="preserve">
+    <value>رقم الهاتف الاول</value>
+  </data>
+  <data name="PhoneNumber2" xml:space="preserve">
+    <value>رقم الهاتف الثاني</value>
+  </data>
+  <data name="PhoneNumber3" xml:space="preserve">
+    <value>رقم الهاتف الثالث</value>
+  </data>
+  <data name="CustomersDetails" xml:space="preserve">
+    <value>تفاصيل التجار</value>
+  </data>
+  <data name="RepresentativeDetails" xml:space="preserve">
+    <value>تفاصيل المندوب</value>
+  </data>
+  <data name="CreatedBy_At_UpdatedBy_At" xml:space="preserve">
+    <value>تم الانشاء والتحديث </value>
+  </data>
+  <data name="AddUser" xml:space="preserve">
+    <value>اضافة مستخدم جدبد</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="CurrentRole" xml:space="preserve">
+    <value>الدور الحالي</value>
+  </data>
+  <data name="AssignRole" xml:space="preserve">
+    <value>تعيين دور</value>
+  </data>
+  <data name="Permissions" xml:space="preserve">
+    <value>الصلاحيات</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>استرجاع كلمه السر</value>
+  </data>
+  <data name="All Transactions Exchange Permission" xml:space="preserve">
+    <value>جميع معاملات اذن الصرف</value>
+  </data>
+  <data name="RegisterCustomer" xml:space="preserve">
+    <value>تسجيل التاجر</value>
+  </data>
+  <data name="Entercustomername" xml:space="preserve">
+    <value>ادخل اسم التاجر</value>
+  </data>
+  <data name="UploadExcel" xml:space="preserve">
+    <value>اضافة ملف</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="UploadExcelFiletoAuto_fillCustomerData" xml:space="preserve">
+    <value>اضافه ملف اكسل لاضافة التجار تلقائي</value>
+  </data>
+  <data name="AddCustomer" xml:space="preserve">
+    <value>اضافة تاجر</value>
+  </data>
+  <data name="Registernewcustomerswitheaseandflexibility" xml:space="preserve">
+    <value>اضافة تاجر جديد بسهوله ومرونه</value>
+  </data>
+  <data name="AccountNumber" xml:space="preserve">
+    <value>رقم الحساب</value>
+  </data>
+  <data name="SelectCustomers" xml:space="preserve">
+    <value>اختر التجار</value>
+  </data>
+  <data name="RegisterTechnician" xml:space="preserve">
+    <value>تسجيل فني</value>
+  </data>
+  <data name="SelectRepresentatives" xml:space="preserve">
+    <value>اختر مندوب</value>
+  </data>
+  <data name="AddTechnician" xml:space="preserve">
+    <value>اضافة فني</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>الرقم السري</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>تاكيد الرقم السري</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="SelectRole" xml:space="preserve">
+    <value>اختر الدور</value>
+  </data>
+  <data name="ReceiptNumber" xml:space="preserve">
+    <value>رقم اذن الاستلام</value>
+  </data>
+  <data name="NickName" xml:space="preserve">
+    <value>اسم الشهره</value>
+  </data>
+  <data name="Add Distributor" xml:space="preserve">
+    <value>اضافة موزع</value>
+  </data>
+  <data name="Register new distributors with ease and flexibility" xml:space="preserve">
+    <value>اضافة موزع جديد بسهوله ومرونه</value>
+  </data>
+  <data name=" Register Distributor" xml:space="preserve">
+    <value>تسجيل موزع</value>
+  </data>
+  <data name="Register new technicians with ease and flexibility" xml:space="preserve">
+    <value>اضافة فني جديد بسهوله ومرونه</value>
+  </data>
+  <data name="Transactions" xml:space="preserve">
+    <value>المعاملات</value>
+  </data>
+  <data name="Technician" xml:space="preserve">
+    <value>الفني</value>
+  </data>
+</root>

@@ -1,0 +1,222 @@
+﻿@model LoyaltyCouponsSystem.BLL.ViewModel.Technician.UpdateTechnicianViewModel
+
+@{
+    ViewData["Title"] = "Update Technician";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<div class="container mt-5">
+    <!-- Backward Button -->
+    <div class="mb-4">
+        <a href="@Url.Action("GetAllTechnicians", "Technician")" class="btn btn-outline-primary" style="border-radius: 30px;">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b>Update Technician</b></h1>
+        <p class="lead text-secondary">Make changes to the technician details with ease.</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form asp-action="UpdateTechnician" method="post" id="technicianForm">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <!-- Hidden field to pass CustomerID -->
+                <input type="hidden" name="TechnicianID" value="@Model.TechnicianID" />
+                <!-- Code and Name -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Code" class="form-label text-primary"><b>Code <span class="text-danger">*</span></b></label>
+                        <input asp-for="Code" class="form-control" placeholder="Enter technician code" required />
+                        <span asp-validation-for="Code" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label text-primary"><b>Name <span class="text-danger">*</span></b></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter technician name" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Nickname and National ID -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NickName" class="form-label text-primary"><b>Nick Name</b></label>
+                        <input asp-for="NickName" class="form-control" placeholder="Enter nickname" />
+                        <span asp-validation-for="NickName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NationalID" class="form-label text-primary"><b>National ID</b></label>
+                        <input asp-for="NationalID" class="form-control" type="text" placeholder="Enter national ID" />
+                        <span asp-validation-for="NationalID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!-- Governate and City -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="Governate" class="form-label text-primary"><b>Governate</b></label>
+                        <select asp-for="SelectedGovernate" class="form-select" id="Governate" required>
+                            <option value="">Select Governate</option>
+                            @foreach (var governate in Model.Governates)
+                            {
+                                <option value="@governate.Value">@governate.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="City" class="form-label text-primary"><b>City</b></label>
+                        <select asp-for="SelectedCity" class="form-select" id="City" required>
+                            <option value="">Select City</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Phone Numbers -->
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="PhoneNumber1" class="form-label text-primary"><b>Phone Number 1</b></label>
+                        <input asp-for="PhoneNumber1" class="form-control" type="text" placeholder="Enter phone number 1" />
+                        <span asp-validation-for="PhoneNumber1" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="PhoneNumber2" class="form-label text-primary"><b>Phone Number 2</b></label>
+                        <input asp-for="PhoneNumber2" class="form-control" type="text" placeholder="Enter phone number 2" />
+                        <span asp-validation-for="PhoneNumber2" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="PhoneNumber3" class="form-label text-primary"><b>Phone Number 3</b></label>
+                        <input asp-for="PhoneNumber3" class="form-control" type="text" placeholder="Enter phone number 3" />
+                        <span asp-validation-for="PhoneNumber3" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save"></i> Update Technician
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+                     $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Search and Select Customers", // Placeholder for search
+                allowClear: true, // Allow clearing selections
+                width: '100%' // Adjust the dropdown to fit container width
+            });
+        });
+            const citiesByGovernate = {
+            Aswan: ["Aswan", "Draou", "Kom Ombo", "Edfu", "Nasser El-Nuba", "Abu Simbel", "Kalabsha", "El-Sebaaia"],
+            Assiut: ["Assiut", "Dairout", "Manfalout", "Qusiya", "Abnoub", "Abu Teeg", "El-Ghanaim", "Sahil Selim", "Al-Badari", "Seda"],
+            Alexandria: ["Alexandria", "Borg El Arab", "Al Amiriya", "Sidi Bishr", "Smouha", "El-Montazah", "Stanley", "Miami", "Gleem", "Abu Qir", "Mandara", "El-Max", "Raml Station"],
+            Ismailia: ["Ismailia", "Fayed", "Qantara Sharq", "Qantara Gharb", "Tel El-Kebir", "Abu Suweir", "Al-Qassasin"],
+            Luxor: ["Luxor", "Esna", "Armant", "El-Zinia", "El-Bayadiya", "El-Qurna", "El-Tod"],
+            "Red Sea": ["Hurghada", "Ras Ghareb", "Safaga", "El-Quseir", "Marsa Alam", "Shalatin", "Halayeb"],
+            Beheira: ["Damanhour", "Kafr El-Dawar", "Rashid", "Edko", "Abu Hamsa", "El-Dalangat", "Mahmoudiya", "Itay El-Baroud", "Housh Eissa", "Shobrahet", "Kom Hamada", "Badr", "Wadi El-Natrun", "New Nubaria"],
+            Giza: ["Giza", "Abu Al-Nemros", "October City", "Sheikh Zayed", "Faisal", "Haram", "Badrashin", "Al-Ayat", "El-Saff", "Atfih", "Wahaat El-Bahareya", "Kirdasa", "Maneshet El-Qanater"],
+            Dakahlia: ["Mansoura", "Tala", "Mitta Ghamr", "Dekernes", "Aja", "Menya El-Nasser", "El-Senbelawein", "Beni Obaid", "El-Manzala", "Tami El-Omdeed", "El-Matariya", "Balqas", "Meet Salsil", "El-Khordy"],
+            Suez: ["Suez", "Ain Sokhna", "El-Adabiya"],
+            Sharqia: ["Zagazig", "Menia El-Qamh", "Belbes", "Mashtool El-Souk", "Abu Hammad", "El-Qanayat", "Hehia", "El-Ibrahimia", "Deirab Najm", "Kafr Saker", "Olad Saker", "Fakous", "El-Salihiya El-Gedida", "Husseiniya", "El-Ashter"],
+            Gharbia: ["Tanta", "El-Mahalla El-Kubra", "Kafr El-Zayat", "Zefta", "El-Santa", "Khatour", "Basyoun", "Samannoud"],
+            Cairo: ["Cairo", "Helwan", "Maadi", "Shorouk", "Nasr City", "Fifth Settlement", "Heliopolis", "Zamalek", "Ain Shams", "Sayeda Zainab", "Mousky", "Mohandiseen", "Dokki"],
+            Qalyubia: ["Benha", "Tukh", "Qalyoub", "El-Qanater El-Khairia", "Shubra El-Kheima", "El-Khanka", "Kafr Shokr", "El-Obour"],
+            "New Valley": ["Kharga", "Dakhla", "Farafra", "Paris", "Balat"],
+            Matrouh: ["Marsa Matrouh", "El-Alamein", "Sidi Abdel Rahman", "El-Hamra"],
+            Minya: ["Minya", "Mallawi", "Beni Mazar", "Samalut", "El-Edwa", "Deir Mawas", "El-Qusiya", "El-Minya"],
+            Fayoum: ["Fayoum", "Etsa", "Ibshway", "Tamiya", "Youssef El-Seddik", "Sinuris", "Shakshouk"],
+            "Beni Suef": ["Beni Suef", "El-Fashn", "Nasser", "El-Wasta", "Ibsheway", "Sumosta", "Banha"],
+            "Kafr El Sheikh": ["Kafr El-Sheikh", "Desouq", "Qulubia", "Riyad", "Beyala", "Fuwah", "Haji", "Kafr El-Batikh"],
+            "Port Said": ["El-Gamil", "El-Manakh", "Abu Talat"],
+            Damietta: ["Ras El-Bar", "Ezbet El-Borg", "Kafr Saad"],
+            Menoufia: ["Shibin El-Kom", "Menouf", "Ashmoun", "Tala", "Berket El-Saba", "Sadat City", "Sers El-Lyan"],
+            Qena: ["Qena", "Deshna", "Nag Hammadi", "Qous"],
+            Sohag: ["Sohag", "Tahta", "El-Balyana", "Akhmim", "Girga", "Dar El-Salam"],
+            "South Sinai": ["Sharm El-Sheikh", "Dahab", "Nuweiba", "Taba", "Tor Sinai"],
+            "North Sinai": ["Arish", "Sheikh Zuweid", "Rafah", "Nakhl", "Bir El-Abd"]
+        };
+
+                document.getElementById("Governate").addEventListener("change", function () {
+            const governateId = this.value;
+            const citySelect = document.getElementById("City");
+
+            citySelect.innerHTML = '<option value="" disabled selected>Choose a City</option>';
+
+            if (governateId) {
+                // AJAX request to get cities based on governorate selection
+                fetch(`/Technician/GetCitiesByGovernorate?governorateId=${governateId}`)
+                    .then(response => response.json())
+                    .then(cities => {
+                        citySelect.disabled = false;
+
+                        cities.forEach(function (city) {
+                            const option = document.createElement("option");
+                            option.value = city.cityID;
+                            option.textContent = city.cityName;
+                            citySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cities:', error);
+                    });
+            } else {
+                citySelect.disabled = true;
+            }
+        });
+
+
+    </script>
+}
+
+<style>
+    .btn-custom {
+        display: inline-block;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 10px 25px;
+        border-radius: 30px;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            color:white;
+        }
+
+        .btn-custom:active {
+            background-color: #004085;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-custom i {
+            margin-right: 8px;
+        }
+    .form-control, .form-select {
+        border-radius: 20px;
+    }
+    .btn-outline-primary {
+        font-size: 14px;
+        padding: 8px 20px;
+        font-weight: bold;
+        border: 2px solid #007bff;
+        color: #007bff;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+</style>

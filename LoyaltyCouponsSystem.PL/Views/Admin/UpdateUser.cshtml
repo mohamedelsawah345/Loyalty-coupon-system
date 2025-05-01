@@ -1,0 +1,276 @@
+﻿@model LoyaltyCouponsSystem.BLL.ViewModel.Admin.AdminUserViewModel
+
+@{
+    ViewData["Title"] = "Update User";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<div class="container mt-5">
+
+    <!-- Backward Button -->
+    <div class="mb-4">
+        <a href="@Url.Action("ManageUsers", "Admin")" class="btn btn-outline-primary" style="border-radius: 30px;">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary"><b>Update User</b></h1>
+        <p class="lead text-secondary">Make changes to the User details with ease.</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="UpdateUser" method="post">
+                <!-- Hidden field to pass CustomerID -->
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Customer Name and Code -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="UserName" class="form-label text-primary"><b>User Name</b></label>
+                        <input asp-for="UserName" class="form-control" placeholder="Enter User Name" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NationalID" class="form-label text-primary"><b>NationalID</b></label>
+                        <input asp-for="NationalID" class="form-control" placeholder="Enter National ID" />
+                        <span asp-validation-for="NationalID" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PhoneNumber" class="form-label text-primary"><b>Phone Number</b></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="Enter phone number" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+               
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="OptionalPhoneNumber" class="form-label text-primary"><b>Phone Number (Optional)</b></label>
+                        <input asp-for="OptionalPhoneNumber" class="form-control" placeholder="Enter Optional Phone Number" />
+                        <span asp-validation-for="OptionalPhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Governorate and City -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="governate" class="form-label text-primary"><b>Governorate</b></label>
+                        <select id="governate" class="form-select" asp-for="Governorate">
+                            <option selected disabled>Select Governorate</option>
+                            <option value="Aswan">Aswan</option>
+                            <option value="Assiut">Assiut</option>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Ismailia">Ismailia</option>
+                            <option value="Luxor">Luxor</option>
+                            <option value="Red Sea">Red Sea</option>
+                            <option value="Beheira">Beheira</option>
+                            <option value="Giza">Giza</option>
+                            <option value="Dakahlia">Dakahlia</option>
+                            <option value="Suez">Suez</option>
+                            <option value="Sharqia">Sharqia</option>
+                            <option value="Gharbia">Gharbia</option>
+                            <option value="Cairo">Cairo</option>
+                            <option value="Qalyubia">Qalyubia</option>
+                            <option value="New Valley">New Valley</option>
+                            <option value="Matrouh">Matrouh</option>
+                            <option value="Minya">Minya</option>
+                            <option value="Fayoum">Fayoum</option>
+                            <option value="Beni Suef">Beni Suef</option>
+                            <option value="Kafr El Sheikh">Kafr El Sheikh</option>
+                            <option value="Port Said">Port Said</option>
+                            <option value="Damietta">Damietta</option>
+                            <option value="Menoufia">Menoufia</option>
+                            <option value="Qena">Qena</option>
+                            <option value="Sohag">Sohag</option>
+                            <option value="South Sinai">South Sinai</option>
+                            <option value="North Sinai">North Sinai</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="city" class="form-label text-primary"><b>City</b></label>
+                        <select id="city" class="form-select" asp-for="City" disabled>
+                            <option value="" disabled selected>Choose a City</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save"></i> Update User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-outline-primary {
+        font-size: 14px;
+        padding: 8px 20px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        border: 2px solid #007bff;
+        color: #007bff;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .form-control, .form-select {
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        }
+
+    label {
+        font-weight: bold;
+    }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-label {
+        color: #007bff;
+    }
+
+    .form-select {
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        padding: 10px 15px;
+        border: 1px solid #007bff;
+        color: #555;
+        background-color: #fff;
+        appearance: none; /* For consistent cross-browser dropdown styling */
+    }
+
+        .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        }
+
+        .form-select:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+</style>
+
+
+<script>
+    const citiesByGovernate = {
+        Aswan: ["Aswan", "Draou", "Kom Ombo", "Edfu", "Nasser El-Nuba", "Abu Simbel", "Kalabsha", "El-Sebaaia"],
+        Assiut: ["Assiut", "Dairout", "Manfalout", "Qusiya", "Abnoub", "Abu Teeg", "El-Ghanaim", "Sahil Selim", "Al-Badari", "Seda"],
+        Alexandria: ["Alexandria", "Borg El Arab", "Al Amiriya", "Sidi Bishr", "Smouha", "El-Montazah", "Stanley", "Miami", "Gleem", "Abu Qir", "Mandara", "El-Max", "Raml Station"],
+        Ismailia: ["Ismailia", "Fayed", "Qantara Sharq", "Qantara Gharb", "Tel El-Kebir", "Abu Suweir", "Al-Qassasin"],
+        Luxor: ["Luxor", "Esna", "Armant", "El-Zinia", "El-Bayadiya", "El-Qurna", "El-Tod"],
+        "Red Sea": ["Hurghada", "Ras Ghareb", "Safaga", "El-Quseir", "Marsa Alam", "Shalatin", "Halayeb"],
+        Beheira: ["Damanhour", "Kafr El-Dawar", "Rashid", "Edko", "Abu Hamsa", "El-Dalangat", "Mahmoudiya", "Itay El-Baroud", "Housh Eissa", "Shobrahet", "Kom Hamada", "Badr", "Wadi El-Natrun", "New Nubaria"],
+        Giza: ["Giza", "Abu Al-Nemros", "October City", "Sheikh Zayed", "Faisal", "Haram", "Badrashin", "Al-Ayat", "El-Saff", "Atfih", "Wahaat El-Bahareya", "Kirdasa", "Maneshet El-Qanater"],
+        Dakahlia: ["Mansoura", "Tala", "Mitta Ghamr", "Dekernes", "Aja", "Menya El-Nasser", "El-Senbelawein", "Beni Obaid", "El-Manzala", "Tami El-Omdeed", "El-Matariya", "Balqas", "Meet Salsil", "El-Khordy"],
+        Suez: ["Suez", "Ain Sokhna", "El-Adabiya"],
+        Sharqia: ["Zagazig", "Menia El-Qamh", "Belbes", "Mashtool El-Souk", "Abu Hammad", "El-Qanayat", "Hehia", "El-Ibrahimia", "Deirab Najm", "Kafr Saker", "Olad Saker", "Fakous", "El-Salihiya El-Gedida", "Husseiniya", "El-Ashter"],
+        Gharbia: ["Tanta", "El-Mahalla El-Kubra", "Kafr El-Zayat", "Zefta", "El-Santa", "Khatour", "Basyoun", "Samannoud"],
+        Cairo: ["Cairo", "Helwan", "Maadi", "Shorouk", "Nasr City", "Fifth Settlement", "Heliopolis", "Zamalek", "Ain Shams", "Sayeda Zainab", "Mousky", "Mohandiseen", "Dokki"],
+        Qalyubia: ["Benha", "Tukh", "Qalyoub", "El-Qanater El-Khairia", "Shubra El-Kheima", "El-Khanka", "Kafr Shokr", "El-Obour"],
+        "New Valley": ["Kharga", "Dakhla", "Farafra", "Paris", "Balat"],
+        Matrouh: ["Marsa Matrouh", "El-Alamein", "Sidi Abdel Rahman", "El-Hamra"],
+        Minya: ["Minya", "Mallawi", "Beni Mazar", "Samalut", "El-Edwa", "Deir Mawas", "El-Qusiya", "El-Minya"],
+        Fayoum: ["Fayoum", "Etsa", "Ibshway", "Tamiya", "Youssef El-Seddik", "Sinuris", "Shakshouk"],
+        "Beni Suef": ["Beni Suef", "El-Fashn", "Nasser", "El-Wasta", "Ibsheway", "Sumosta", "Banha"],
+        "Kafr El Sheikh": ["Kafr El-Sheikh", "Desouq", "Qulubia", "Riyad", "Beyala", "Fuwah", "Haji", "Kafr El-Batikh"],
+        "Port Said": ["El-Gamil", "El-Manakh", "Abu Talat"],
+        Damietta: ["Ras El-Bar", "Ezbet El-Borg", "Kafr Saad"],
+        Menoufia: ["Shibin El-Kom", "Menouf", "Ashmoun", "Tala", "Berket El-Saba", "Sadat City", "Sers El-Lyan"],
+        Qena: ["Qena", "Deshna", "Nag Hammadi", "Qous"],
+        Sohag: ["Sohag", "Tahta", "El-Balyana", "Akhmim", "Girga", "Dar El-Salam"],
+        "South Sinai": ["Sharm El-Sheikh", "Dahab", "Nuweiba", "Taba", "Tor Sinai"],
+        "North Sinai": ["Arish", "Sheikh Zuweid", "Rafah", "Nakhl", "Bir El-Abd"]
+    };
+
+            document.getElementById("governate").addEventListener("change", function () {
+        const governate = this.value;
+        const citySelect = document.getElementById("city");
+
+        citySelect.innerHTML = '<option value="" disabled selected>Choose a City</option>';
+
+        if (governate && citiesByGovernate[governate]) {
+            citySelect.disabled = false;
+            citiesByGovernate[governate].forEach(city => {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        } else {
+            citySelect.disabled = true;
+            const errorMessage = document.createElement("option");
+            errorMessage.value = "";
+            errorMessage.textContent = "No cities available for the selected Governorate";
+            citySelect.appendChild(errorMessage);
+        }
+    });
+
+
+</script>

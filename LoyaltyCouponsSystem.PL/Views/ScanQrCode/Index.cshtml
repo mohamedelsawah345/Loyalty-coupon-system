@@ -1,0 +1,211 @@
+﻿
+
+@{
+    ViewData["Title"] = "Scan QR Code";
+    Layout = "~/Views/Shared/_LayoutCoupon.cshtml";
+}
+
+<!-- Include Burger Menu for Mobile -->
+@await Html.PartialAsync("_BurgerMenu")
+
+<div class="container mt-5">
+    <!-- Page Header -->
+    <div class="text-center mb-4">
+        <h2 class="text-primary fw-bold">@SharedLocalizer["QRCodeScanner"] </h2>
+    </div>
+
+    <!-- QR Code Scanner Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="scanner-container">
+                <div id="qr-reader" class="qr-reader"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons Section -->
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-4 col-sm-6 mb-3">
+            <button type="button" class="btn btn-primary btn-lg w-100" onclick="redirectToScan()">
+                <i class="fas fa-qrcode me-2"></i> @SharedLocalizer["ContinueScanning"]
+            </button>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <button type="button" class="btn btn-success btn-lg w-100" onclick="location.href='@Url.Action("GetAllCoupons", "HistoryGenerated")'">
+                <i class="fas fa-check me-2"></i> @SharedLocalizer["FinishScanning"]
+            </button>
+        </div>
+    </div>
+
+    <!-- Scanned Count Section -->
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="alert alert-info">
+                <strong> @SharedLocalizer["NumberofCouponsScanned"]  :</strong> @ViewBag.Counter
+            </div>
+        </div>
+    </div>
+
+    <!-- Display Scan Results -->
+    <div class="row mt-4 justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div id="qr-reader-results" class="scan-results">
+                <p class="text-muted"> @SharedLocalizer["Scannedresultswillappearhere"] .</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include the html5-qrcode library -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<!-- Include SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<script>
+    let html5QrcodeScanner;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { fps: 10, qrbox: 250 },
+            false
+        );
+    });
+
+    function redirectToScan() {
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`Scan result: ${decodedText}`, decodedResult);
+
+        fetch('/ScanQrCode/SaveData', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(decodedText)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let resultsDiv = document.getElementById('qr-reader-results');
+                let existingSerials = Array.from(resultsDiv.children).map(item => item.innerText);
+
+                if (!existingSerials.includes(`Serial Number: ${data.serialNumber}`)) {
+                    let newSerialNumberElement = document.createElement('div');
+                    newSerialNumberElement.innerText = `Serial Number: ${data.serialNumber}`;
+                    resultsDiv.appendChild(newSerialNumberElement);
+                }
+            } else if (data.message === "This coupon has already been scanned") {
+                Swal.fire({
+                    title: 'Already Scanned!',
+                    text: 'This coupon has already been scanned.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+
+    function onScanFailure(error) {
+        console.warn(`QR code scan error: ${error}`);
+    }
+</script>
+
+<style>
+    .scanner-container {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .qr-reader {
+        width: 100%;
+        height: auto;
+    }
+
+    .btn {
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .alert {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .scan-results {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+        min-height: 100px;
+    }
+
+    /* Responsive Styling for Mobile Devices */
+@@media (max-width: 768px) {
+    /* Adjust container padding and form width */
+    .container {
+        padding: 10px;
+        width: 100%;
+    }
+
+    /* Center the header */
+    .text-center h2 {
+        font-size: 22px;
+    }
+
+    /* Adjust QR Scanner Box */
+    .scanner-container {
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .qr-reader {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+
+    /* Ensure buttons stack properly */
+    .row.mt-4 .col-md-4 {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 12px;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Reduce padding for scanned count section */
+    .alert {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    /* Adjust scanned results box */
+    .scan-results {
+        padding: 10px;
+        font-size: 14px;
+        min-height: 80px;
+        text-align: center;
+    }
+
+    /* Reduce icon size inside buttons */
+    .btn i {
+        font-size: 16px;
+    }
+}
+
+
+</style>
+
