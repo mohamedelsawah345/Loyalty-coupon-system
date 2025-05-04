@@ -1,21 +1,25 @@
 # 🎁 Loyalty Coupon System
 
-A **Loyalty Management System** that enables businesses to create and manage discount coupons for their loyal customers. Built with **ASP.NET Web Forms** using a **3-tier architecture** to separate concerns between the Presentation Layer, Business Logic Layer, and Data Access Layer.
+A **Loyalty Management System** that enables businesses to create and manage discount coupons for their loyal customers. Built with **ASP.NET Web MVC** using a **3-tier architecture** to separate concerns between the Presentation Layer, Business Logic Layer, and Data Access Layer.
 
 ---
 
 ## 📦 Project Structure
 
 Loyalty-coupon-system/
+
 ├── LoyaltyCouponsSystem.PL/ # Presentation Layer (UI)
+
 ├── LoyaltyCouponsSystem.BLL/ # Business Logic Layer
+
 ├── LoyaltyCouponsSystem.DAL/ # Data Access Layer
+
 ├── LoyaltyCouponsSystem.PL.sln # Solution File
+
 └── README.md
 
-markdown
-Copy
-Edit
+
+
 
 ---
 
@@ -26,7 +30,7 @@ Edit
 - **Operating System:** Windows 10 or later
 - **IDE:** Visual Studio 2019 or newer
 - **Database:** SQL Server
-- **Framework:** .NET Framework 4.7.2 or later
+- **Framework:** .NET Framework 9 or later
 
 ### ⚙️ Installation Steps
 
@@ -80,7 +84,8 @@ Login page: Login.aspx
 Simple session-based user authentication
 
 💡 Screenshots
-/////
+![image](https://github.com/user-attachments/assets/44423ceb-f5c6-4aef-9883-b37492d5b77f)
+
 
 
 🛡️ Security Notes
